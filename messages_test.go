@@ -1,6 +1,8 @@
 package xesende_test
 
 import (
+	"fmt"
+	"log"
 	"net/http/httptest"
 	"net/url"
 	"strconv"
@@ -10,6 +12,19 @@ import (
 	xesende "."
 	"github.com/stretchr/testify/assert"
 )
+
+func ExampleMessagesClient_Sent() {
+	client := xesende.New("user@example.com", "pass")
+
+	response, err := client.Messages.Sent()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, message := range response.Messages {
+		fmt.Printf("%v %s: %s\n", message.SubmittedAt, message.To, message.Summary)
+	}
+}
 
 func TestMessagesSent(t *testing.T) {
 	const (
