@@ -9,6 +9,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func ExampleAccountClient_Send() {
+	accountClient := xesende.New("user@example.com", "pass").Account("EX00000")
+
+	accountClient.Send(xesende.Messages{
+		{To: "00000000", Body: "Hello"},
+	})
+}
+
 func TestSendSingleMessage(t *testing.T) {
 	const (
 		batchId    = "batchId"
