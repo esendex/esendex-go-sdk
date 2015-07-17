@@ -39,6 +39,11 @@ func TestSendSingleMessage(t *testing.T) {
 	assert.Equal("POST", h.Request.Method)
 	assert.Equal("/v1.0/messagedispatcher", h.Request.URL.String())
 
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
+
 	assert.Equal(batchId, result.BatchId)
 
 	assert.Equal(1, len(result.Messages))

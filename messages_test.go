@@ -73,6 +73,11 @@ func TestMessagesSent(t *testing.T) {
 	assert.Equal("GET", h.Request.Method)
 	assert.Equal("/v1.0/messageheaders", h.Request.URL.String())
 
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
+
 	assert.Equal(startIndex, result.StartIndex)
 	assert.Equal(count, result.Count)
 	assert.Equal(totalCount, result.TotalCount)
@@ -158,6 +163,11 @@ func TestMessagesSentWithPaging(t *testing.T) {
 
 	assert.Equal("GET", h.Request.Method)
 	assert.Equal("/v1.0/messageheaders", h.Request.URL.Path)
+
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
 
 	query := h.Request.URL.Query()
 	assert.Equal("5", query.Get("startindex"))

@@ -13,7 +13,10 @@ const (
 )
 
 type Client struct {
-	client    *http.Client
+	client *http.Client
+	user   string
+	pass   string
+
 	BaseUrl   *url.URL
 	UserAgent string
 
@@ -24,7 +27,10 @@ func New(user, pass string) *Client {
 	baseUrl, _ := url.Parse(defaultBaseUrl)
 
 	c := &Client{
-		client:    http.DefaultClient,
+		client: http.DefaultClient,
+		user:   user,
+		pass:   pass,
+
 		BaseUrl:   baseUrl,
 		UserAgent: defaultUserAgent,
 	}
@@ -54,6 +60,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 
 	req.Header.Add("Content-Type", "application/xml")
 	req.Header.Add("User-Agent", c.UserAgent)
+	req.SetBasicAuth(c.user, c.pass)
 
 	return req, nil
 }
