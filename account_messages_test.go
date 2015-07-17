@@ -66,7 +66,7 @@ func TestAccountMessagesSent(t *testing.T) {
 
 	account := client.Account("EXHEY")
 
-	result, err := account.Messages.Sent()
+	result, err := account.Sent()
 
 	assert := assert.New(t)
 
@@ -161,7 +161,7 @@ func TestAccountMessagesReceived(t *testing.T) {
 	client.BaseUrl, _ = url.Parse(s.URL)
 
 	account := client.Account("EXHEY")
-	result, err := account.Messages.Received()
+	result, err := account.Received()
 
 	assert := assert.New(t)
 

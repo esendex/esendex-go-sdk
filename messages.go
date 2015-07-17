@@ -56,13 +56,8 @@ type MessageReceivedResponse struct {
 	ReadBy     string
 }
 
-// MessagesClient is a client scoped to making requests for messages.
-type MessagesClient struct {
-	*Client
-}
-
 // Sent returns a list of messages sent by the user.
-func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
+func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders", nil)
 	if err != nil {
 		return nil, err
@@ -114,7 +109,7 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 }
 
 // Received returns the messages sent to the user.
-func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
+func (c *Client) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/inbox/messages", nil)
 	if err != nil {
 		return nil, err
@@ -165,8 +160,8 @@ func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, er
 	return response, nil
 }
 
-// ById returns the message with the given id.
-func (c *MessagesClient) ById(id string) (*MessageResponse, error) {
+// Message returns the message with the given id.
+func (c *Client) Message(id string) (*MessageResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders/"+id, nil)
 	if err != nil {
 		return nil, err

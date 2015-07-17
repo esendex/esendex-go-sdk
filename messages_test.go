@@ -16,7 +16,7 @@ import (
 func ExampleMessagesClient_Sent() {
 	client := xesende.New("user@example.com", "pass")
 
-	response, err := client.Messages.Sent()
+	response, err := client.Sent()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +31,7 @@ func ExampleMessagesClient_Received() {
 
 	now := time.Now()
 
-	response, err := client.Messages.Received(xesende.Between(now.AddDate(0, -6, 0), now))
+	response, err := client.Received(xesende.Between(now.AddDate(0, -6, 0), now))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,7 +94,7 @@ func TestMessagesSent(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.Sent()
+	result, err := client.Sent()
 
 	assert := assert.New(t)
 
@@ -185,7 +185,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.Sent(xesende.Page(5, 10))
+	result, err := client.Sent(xesende.Page(5, 10))
 
 	assert := assert.New(t)
 
@@ -275,7 +275,7 @@ func TestMessagesById(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.ById(id)
+	result, err := client.Message(id)
 
 	assert := assert.New(t)
 
@@ -353,7 +353,7 @@ func TestMessagesReceived(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.Received()
+	result, err := client.Received()
 
 	assert := assert.New(t)
 
@@ -444,7 +444,7 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.Received(xesende.Page(5, 10))
+	result, err := client.Received(xesende.Page(5, 10))
 
 	assert := assert.New(t)
 
@@ -543,7 +543,7 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 	client := xesende.New("user", "pass")
 	client.BaseUrl, _ = url.Parse(s.URL)
 
-	result, err := client.Messages.Received(xesende.Between(messagesFrom, messagesTo))
+	result, err := client.Received(xesende.Between(messagesFrom, messagesTo))
 
 	assert := assert.New(t)
 

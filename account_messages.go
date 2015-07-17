@@ -2,14 +2,8 @@ package xesende
 
 import "errors"
 
-// AccountMessagesClient is a client scoped to a specific account for making
-// requests for messages.
-type AccountMessagesClient struct {
-	*AccountClient
-}
-
 // Sent returns a list of messages sent by the account.
-func (c *AccountMessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
+func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders?accountReference="+c.reference, nil)
 	if err != nil {
 		return nil, err
@@ -61,7 +55,7 @@ func (c *AccountMessagesClient) Sent(opts ...Option) (*MessagesResponse, error) 
 }
 
 // Received returns the messages sent to the account.
-func (c *AccountMessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
+func (c *AccountClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/inbox/"+c.reference+"/messages", nil)
 	if err != nil {
 		return nil, err

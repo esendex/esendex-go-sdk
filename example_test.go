@@ -22,7 +22,7 @@ func sendMessage(c *xesende.Client, to, body string) (id string, err error) {
 }
 
 func getStatus(c *xesende.Client, id string) (status string, err error) {
-	message, err := c.Messages.ById(id)
+	message, err := c.Message(id)
 	if err != nil {
 		return "", err
 	}

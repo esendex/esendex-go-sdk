@@ -20,15 +20,13 @@ type Client struct {
 
 	BaseUrl   *url.URL
 	UserAgent string
-
-	Messages *MessagesClient
 }
 
 // New returns a new API client that authenticates with the credentials provided.
 func New(user, pass string) *Client {
 	baseUrl, _ := url.Parse(defaultBaseUrl)
 
-	c := &Client{
+	return &Client{
 		client: http.DefaultClient,
 		user:   user,
 		pass:   pass,
@@ -36,10 +34,6 @@ func New(user, pass string) *Client {
 		BaseUrl:   baseUrl,
 		UserAgent: defaultUserAgent,
 	}
-
-	c.Messages = &MessagesClient{c}
-
-	return c
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
@@ -92,18 +86,13 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 type AccountClient struct {
 	*Client
 	reference string
-	Messages  *AccountMessagesClient
 }
 
 // Account creates a client that can make requests scoped to a specific account
 // reference.
 func (c *Client) Account(reference string) *AccountClient {
-	ac := &AccountClient{
+	return &AccountClient{
 		Client:    c,
 		reference: reference,
 	}
-
-	ac.Messages = &AccountMessagesClient{ac}
-
-	return ac
 }
