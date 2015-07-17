@@ -10,7 +10,7 @@ import (
 func sendMessage(c *xesende.Client, to, body string) (id string, err error) {
 	account := c.Account("EX00000")
 
-	messages, err := account.Send(xesende.Messages{
+	messages, err := account.Send([]xesende.Message{
 		{To: "4498499", Body: "Hey"},
 	})
 

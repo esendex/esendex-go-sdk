@@ -12,7 +12,7 @@ import (
 func ExampleAccountClient_Send() {
 	accountClient := xesende.New("user@example.com", "pass").Account("EX00000")
 
-	accountClient.Send(xesende.Messages{
+	accountClient.Send([]xesende.Message{
 		{To: "00000000", Body: "Hello"},
 	})
 }
@@ -36,7 +36,7 @@ func TestSendSingleMessage(t *testing.T) {
 
 	account := client.Account("EXWHATEVS")
 
-	result, err := account.Send(xesende.Messages{
+	result, err := account.Send([]xesende.Message{
 		{To: "358973", Body: "HWEYERW"},
 	})
 
