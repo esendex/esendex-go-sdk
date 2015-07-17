@@ -9,7 +9,6 @@ A client for the [Esendex REST API][Esendex].
 func main() {
   client := xesende.New(user, pass)
 
-
   paging := xesende.Paging(0, 10)
 
   messages, err := client.Messages.Sent(paging)
