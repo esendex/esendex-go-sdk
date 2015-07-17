@@ -21,6 +21,7 @@ type SendResponseMessage struct {
 	Id  string
 }
 
+// Send dispatches a list of messages.
 func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
 	body := messageDispatchRequest{
 		AccountReference: c.reference,

@@ -1,3 +1,4 @@
+// Package xesende is a client for the Esendex REST API.
 package xesende
 
 import (
@@ -23,6 +24,7 @@ type Client struct {
 	Messages *MessagesClient
 }
 
+// New returns a new API client that authenticates with the credentials provided.
 func New(user, pass string) *Client {
 	baseUrl, _ := url.Parse(defaultBaseUrl)
 
@@ -86,11 +88,14 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	return resp, err
 }
 
+// AccountClient is a client scoped to a specific account reference.
 type AccountClient struct {
 	*Client
 	reference string
 }
 
+// Account creates a client that can make requests scoped to a specific account
+// reference.
 func (c *Client) Account(reference string) *AccountClient {
 	return &AccountClient{c, reference}
 }

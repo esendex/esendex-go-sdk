@@ -5,8 +5,10 @@ import (
 	"strconv"
 )
 
+// Option is a function that mutates a request.
 type Option func(*http.Request)
 
+// Page is an option that sets the startindex and count query parameters.
 func Page(startIndex, count int) Option {
 	return func(r *http.Request) {
 		q := r.URL.Query()

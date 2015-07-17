@@ -33,6 +33,7 @@ type MessageResponse struct {
 	Parts        int
 	Username     string
 }
+
 type MessagesReceivedResponse struct {
 	Paging
 	Messages []MessageReceivedResponse
@@ -55,10 +56,12 @@ type MessageReceivedResponse struct {
 	ReadBy     string
 }
 
+// MessagesClient is a client scoped to making requests for messages.
 type MessagesClient struct {
 	*Client
 }
 
+// Sent returns a list of messages sent by the user.
 func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders", nil)
 	if err != nil {
@@ -110,6 +113,7 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 	return response, nil
 }
 
+// Received returns the messages sent to the user.
 func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/inbox/messages", nil)
 	if err != nil {
@@ -161,6 +165,7 @@ func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, er
 	return response, nil
 }
 
+// ById returns the message with the given id.
 func (c *MessagesClient) ById(id string) (*MessageResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders/"+id, nil)
 	if err != nil {
