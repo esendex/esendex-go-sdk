@@ -1,6 +1,9 @@
 package xesende
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"errors"
+)
 
 type Messages []Message
 type Message struct {
@@ -28,7 +31,7 @@ func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
 		body.Message[i] = messageDispatchRequestMessage{To: message.To, Body: message.Body}
 	}
 
-	req, err := c.NewRequest("POST", "messagedispatcher", &body)
+	req, err := c.NewRequest("POST", "/v1.0/messagedispatcher", &body)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +43,7 @@ func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, err
+		return nil, errors.New("Expected 200")
 	}
 
 	response := &SendResponse{

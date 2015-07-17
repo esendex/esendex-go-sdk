@@ -35,9 +35,10 @@ func TestSendSingleMessage(t *testing.T) {
 	assert := assert.New(t)
 
 	assert.Nil(err)
-	assert.NotNil(result)
 
 	assert.Equal("POST", h.Request.Method)
+	assert.Equal("/v1.0/messagedispatcher", h.Request.URL.String())
+
 	assert.Equal(batchId, result.BatchId)
 
 	assert.Equal(1, len(result.Messages))

@@ -16,16 +16,22 @@ type Client struct {
 	client    *http.Client
 	BaseUrl   *url.URL
 	UserAgent string
+
+	Messages *MessagesClient
 }
 
 func New(user, pass string) *Client {
 	baseUrl, _ := url.Parse(defaultBaseUrl)
 
-	return &Client{
+	c := &Client{
 		client:    http.DefaultClient,
 		BaseUrl:   baseUrl,
 		UserAgent: defaultUserAgent,
 	}
+
+	c.Messages = &MessagesClient{c}
+
+	return c
 }
 
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
