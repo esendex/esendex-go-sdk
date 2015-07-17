@@ -92,10 +92,18 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 type AccountClient struct {
 	*Client
 	reference string
+	Messages  *AccountMessagesClient
 }
 
 // Account creates a client that can make requests scoped to a specific account
 // reference.
 func (c *Client) Account(reference string) *AccountClient {
-	return &AccountClient{c, reference}
+	ac := &AccountClient{
+		Client:    c,
+		reference: reference,
+	}
+
+	ac.Messages = &AccountMessagesClient{ac}
+
+	return ac
 }
