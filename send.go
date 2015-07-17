@@ -31,13 +31,13 @@ func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
 		body.Message[i] = messageDispatchRequestMessage{To: message.To, Body: message.Body}
 	}
 
-	req, err := c.NewRequest("POST", "/v1.0/messagedispatcher", &body)
+	req, err := c.newRequest("POST", "/v1.0/messagedispatcher", &body)
 	if err != nil {
 		return nil, err
 	}
 
 	var v messageDispatchResponse
-	resp, err := c.Do(req, &v)
+	resp, err := c.do(req, &v)
 	if err != nil {
 		return nil, err
 	}

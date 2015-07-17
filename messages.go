@@ -60,7 +60,7 @@ type MessagesClient struct {
 }
 
 func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
-	req, err := c.NewRequest("GET", "/v1.0/messageheaders", nil)
+	req, err := c.newRequest("GET", "/v1.0/messageheaders", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 	}
 
 	var v messageHeadersResponse
-	resp, err := c.Do(req, &v)
+	resp, err := c.do(req, &v)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 }
 
 func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
-	req, err := c.NewRequest("GET", "/v1.0/inbox/messages", nil)
+	req, err := c.newRequest("GET", "/v1.0/inbox/messages", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, er
 	}
 
 	var v inboxResponse
-	resp, err := c.Do(req, &v)
+	resp, err := c.do(req, &v)
 	if err != nil {
 		return nil, err
 	}
@@ -162,13 +162,13 @@ func (c *MessagesClient) Received(opts ...Option) (*MessagesReceivedResponse, er
 }
 
 func (c *MessagesClient) ById(id string) (*MessageResponse, error) {
-	req, err := c.NewRequest("GET", "/v1.0/messageheaders/"+id, nil)
+	req, err := c.newRequest("GET", "/v1.0/messageheaders/"+id, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var v messageHeadersResponseMessageHeader
-	resp, err := c.Do(req, &v)
+	resp, err := c.do(req, &v)
 	if err != nil {
 		return nil, err
 	}

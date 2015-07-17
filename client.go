@@ -40,7 +40,7 @@ func New(user, pass string) *Client {
 	return c
 }
 
-func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
+func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
 	reqUrl, err := c.BaseUrl.Parse(path)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	return req, nil
 }
 
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
