@@ -18,7 +18,7 @@ func sendMessage(c *xesende.Client, to, body string) (id string, err error) {
 		return "", err
 	}
 
-	return messages.Messages[0].Id, nil
+	return messages.Messages[0].ID, nil
 }
 
 func getStatus(c *xesende.Client, id string) (status string, err error) {
@@ -33,13 +33,13 @@ func getStatus(c *xesende.Client, id string) (status string, err error) {
 func Example() {
 	client := xesende.New("user@example.com", "pass")
 
-	messageId, err := sendMessage(client, "538734", "Hey")
+	messageID, err := sendMessage(client, "538734", "Hey")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for i := range []int{0, 1, 2, 3, 4, 5} {
-		status, err := getStatus(client, messageId)
+		status, err := getStatus(client, messageID)
 		if err != nil {
 			log.Fatal(err)
 		}

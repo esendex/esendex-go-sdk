@@ -60,7 +60,7 @@ func TestBatches(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Batches()
 
@@ -83,8 +83,8 @@ func TestBatches(t *testing.T) {
 	if assert.Equal(1, len(result.Batches)) {
 		batch := result.Batches[0]
 
-		assert.Equal(id, batch.Id)
-		assert.Equal(uri, batch.Uri)
+		assert.Equal(id, batch.ID)
+		assert.Equal(uri, batch.URI)
 		assert.Equal(createdAt, batch.CreatedAt)
 		assert.Equal(batchSize, batch.BatchSize)
 		assert.Equal(persistedBatchSize, batch.PersistedBatchSize)

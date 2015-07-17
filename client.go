@@ -9,35 +9,36 @@ import (
 )
 
 const (
-	defaultBaseUrl   = "https://api.esendex.com/"
-	defaultUserAgent = ""
+	defaultBaseURL   = "https://api.esendex.com/"
+	defaultUserAgent = "xesende/golang"
 )
 
+// Client is the entry point for accessing the Esendex REST API.
 type Client struct {
 	client *http.Client
 	user   string
 	pass   string
 
-	BaseUrl   *url.URL
+	BaseURL   *url.URL
 	UserAgent string
 }
 
 // New returns a new API client that authenticates with the credentials provided.
 func New(user, pass string) *Client {
-	baseUrl, _ := url.Parse(defaultBaseUrl)
+	baseURL, _ := url.Parse(defaultBaseURL)
 
 	return &Client{
 		client: http.DefaultClient,
 		user:   user,
 		pass:   pass,
 
-		BaseUrl:   baseUrl,
+		BaseURL:   baseURL,
 		UserAgent: defaultUserAgent,
 	}
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
-	reqUrl, err := c.BaseUrl.Parse(path)
+	reqURL, err := c.BaseURL.Parse(path)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 		}
 	}
 
-	req, err := http.NewRequest(method, reqUrl.String(), buf)
+	req, err := http.NewRequest(method, reqURL.String(), buf)
 	if err != nil {
 		return nil, err
 	}

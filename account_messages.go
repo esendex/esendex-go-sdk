@@ -34,8 +34,8 @@ func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
 
 	for i, message := range v.Messages {
 		response.Messages[i] = MessageResponse{
-			Id:           message.Id,
-			Uri:          message.Uri,
+			ID:           message.ID,
+			URI:          message.URI,
 			Reference:    message.Reference,
 			Status:       message.Status,
 			LastStatusAt: message.LastStatusAt.Time,
@@ -44,7 +44,7 @@ func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
 			To:           message.To,
 			From:         message.From,
 			Summary:      message.Summary,
-			BodyUri:      message.Body.Uri,
+			BodyURI:      message.Body.URI,
 			Direction:    message.Direction,
 			Parts:        message.Parts,
 			Username:     message.Username,
@@ -86,8 +86,8 @@ func (c *AccountClient) Received(opts ...Option) (*MessagesReceivedResponse, err
 
 	for i, message := range v.Messages {
 		response.Messages[i] = MessageReceivedResponse{
-			Id:         message.Id,
-			Uri:        message.Uri,
+			ID:         message.ID,
+			URI:        message.URI,
 			Reference:  message.Reference,
 			Status:     message.Status,
 			ReceivedAt: message.ReceivedAt.Time,
@@ -95,7 +95,7 @@ func (c *AccountClient) Received(opts ...Option) (*MessagesReceivedResponse, err
 			To:         message.To,
 			From:       message.From,
 			Summary:    message.Summary,
-			BodyUri:    message.Body.Uri,
+			BodyURI:    message.Body.URI,
 			Direction:  message.Direction,
 			Parts:      message.Parts,
 			ReadAt:     message.ReadAt.Time,

@@ -5,24 +5,27 @@ import (
 	"errors"
 )
 
-type Messages []Message
+// Message is a message to send.
 type Message struct {
 	To   string
 	Body string
 }
 
+// SendResponse gives the batchid for the sent batch and lists the details of
+// each message sent.
 type SendResponse struct {
-	BatchId  string
+	BatchID  string
 	Messages []SendResponseMessage
 }
 
+// SendResponseMessage gives the details for a single sent message.
 type SendResponseMessage struct {
-	Uri string
-	Id  string
+	URI string
+	ID  string
 }
 
 // Send dispatches a list of messages.
-func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
+func (c *AccountClient) Send(messages []Message) (*SendResponse, error) {
 	body := messageDispatchRequest{
 		AccountReference: c.reference,
 		Message:          make([]messageDispatchRequestMessage, len(messages)),
@@ -48,14 +51,14 @@ func (c *AccountClient) Send(messages Messages) (*SendResponse, error) {
 	}
 
 	response := &SendResponse{
-		BatchId:  v.BatchId,
+		BatchID:  v.BatchID,
 		Messages: make([]SendResponseMessage, len(v.MessageHeader)),
 	}
 
 	for i, message := range v.MessageHeader {
 		response.Messages[i] = SendResponseMessage{
-			Uri: message.Uri,
-			Id:  message.Id,
+			URI: message.URI,
+			ID:  message.ID,
 		}
 	}
 
@@ -75,9 +78,9 @@ type messageDispatchRequestMessage struct {
 
 type messageDispatchResponse struct {
 	XMLName       xml.Name `xml:"http://api.esendex.com/ns/ messageheaders"`
-	BatchId       string   `xml:"batchid,attr"`
+	BatchID       string   `xml:"batchid,attr"`
 	MessageHeader []struct {
-		Uri string `xml:"uri,attr"`
-		Id  string `xml:"id,attr"`
+		URI string `xml:"uri,attr"`
+		ID  string `xml:"id,attr"`
 	} `xml:"messageheader"`
 }

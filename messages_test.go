@@ -54,7 +54,7 @@ func TestMessagesSent(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		username    = "user"
@@ -82,7 +82,7 @@ func TestMessagesSent(t *testing.T) {
    <phonenumber>`+from+`</phonenumber>
   </from>
   <summary>`+summary+`</summary>
-  <body uri="`+bodyUri+`"/>
+  <body uri="`+bodyURI+`"/>
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <username>`+username+`</username>
@@ -92,7 +92,7 @@ func TestMessagesSent(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Sent()
 
@@ -115,8 +115,8 @@ func TestMessagesSent(t *testing.T) {
 	if assert.Equal(1, len(result.Messages)) {
 		message := result.Messages[0]
 
-		assert.Equal(id, message.Id)
-		assert.Equal(uri, message.Uri)
+		assert.Equal(id, message.ID)
+		assert.Equal(uri, message.URI)
 		assert.Equal(reference, message.Reference)
 		assert.Equal(status, message.Status)
 		assert.Equal(lastStatusAt, message.LastStatusAt)
@@ -125,7 +125,7 @@ func TestMessagesSent(t *testing.T) {
 		assert.Equal(to, message.To)
 		assert.Equal(from, message.From)
 		assert.Equal(summary, message.Summary)
-		assert.Equal(bodyUri, message.BodyUri)
+		assert.Equal(bodyURI, message.BodyURI)
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
@@ -145,7 +145,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		username    = "user"
@@ -173,7 +173,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
    <phonenumber>`+from+`</phonenumber>
   </from>
   <summary>`+summary+`</summary>
-  <body uri="`+bodyUri+`"/>
+  <body uri="`+bodyURI+`"/>
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <username>`+username+`</username>
@@ -183,7 +183,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Sent(xesende.Page(5, 10))
 
@@ -210,8 +210,8 @@ func TestMessagesSentWithPaging(t *testing.T) {
 	if assert.Equal(1, len(result.Messages)) {
 		message := result.Messages[0]
 
-		assert.Equal(id, message.Id)
-		assert.Equal(uri, message.Uri)
+		assert.Equal(id, message.ID)
+		assert.Equal(uri, message.URI)
 		assert.Equal(reference, message.Reference)
 		assert.Equal(status, message.Status)
 		assert.Equal(lastStatusAt, message.LastStatusAt)
@@ -220,14 +220,14 @@ func TestMessagesSentWithPaging(t *testing.T) {
 		assert.Equal(to, message.To)
 		assert.Equal(from, message.From)
 		assert.Equal(summary, message.Summary)
-		assert.Equal(bodyUri, message.BodyUri)
+		assert.Equal(bodyURI, message.BodyURI)
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
 	}
 }
 
-func TestMessagesById(t *testing.T) {
+func TestMessagesByID(t *testing.T) {
 	const (
 		id          = "messageheaderid"
 		uri         = "http://somemessageheader"
@@ -237,7 +237,7 @@ func TestMessagesById(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		username    = "user"
@@ -264,7 +264,7 @@ func TestMessagesById(t *testing.T) {
   <phonenumber>`+from+`</phonenumber>
  </from>
  <summary>`+summary+`</summary>
- <body uri="`+bodyUri+`"/>
+ <body uri="`+bodyURI+`"/>
  <direction>`+direction+`</direction>
  <parts>`+strconv.Itoa(parts)+`</parts>
  <username>`+username+`</username>
@@ -273,7 +273,7 @@ func TestMessagesById(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Message(id)
 
@@ -284,8 +284,8 @@ func TestMessagesById(t *testing.T) {
 	assert.Equal("GET", h.Request.Method)
 	assert.Equal("/v1.0/messageheaders/"+id, h.Request.URL.String())
 
-	assert.Equal(id, result.Id)
-	assert.Equal(uri, result.Uri)
+	assert.Equal(id, result.ID)
+	assert.Equal(uri, result.URI)
 	assert.Equal(reference, result.Reference)
 	assert.Equal(status, result.Status)
 	assert.Equal(lastStatusAt, result.LastStatusAt)
@@ -294,7 +294,7 @@ func TestMessagesById(t *testing.T) {
 	assert.Equal(to, result.To)
 	assert.Equal(from, result.From)
 	assert.Equal(summary, result.Summary)
-	assert.Equal(bodyUri, result.BodyUri)
+	assert.Equal(bodyURI, result.BodyURI)
 	assert.Equal(direction, result.Direction)
 	assert.Equal(parts, result.Parts)
 	assert.Equal(username, result.Username)
@@ -313,7 +313,7 @@ func TestMessagesReceived(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		readBy      = "someone"
@@ -340,7 +340,7 @@ func TestMessagesReceived(t *testing.T) {
    <phonenumber>`+from+`</phonenumber>
   </from>
   <summary>`+summary+`</summary>
-  <body uri="`+bodyUri+`"/>
+  <body uri="`+bodyURI+`"/>
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <readat>`+readAtStr+`</readat>
@@ -351,7 +351,7 @@ func TestMessagesReceived(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Received()
 
@@ -374,8 +374,8 @@ func TestMessagesReceived(t *testing.T) {
 	if assert.Equal(1, len(result.Messages)) {
 		message := result.Messages[0]
 
-		assert.Equal(id, message.Id)
-		assert.Equal(uri, message.Uri)
+		assert.Equal(id, message.ID)
+		assert.Equal(uri, message.URI)
 		assert.Equal(reference, message.Reference)
 		assert.Equal(status, message.Status)
 		assert.Equal(receivedAt, message.ReceivedAt)
@@ -383,7 +383,7 @@ func TestMessagesReceived(t *testing.T) {
 		assert.Equal(to, message.To)
 		assert.Equal(from, message.From)
 		assert.Equal(summary, message.Summary)
-		assert.Equal(bodyUri, message.BodyUri)
+		assert.Equal(bodyURI, message.BodyURI)
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(readAt, message.ReadAt)
@@ -404,7 +404,7 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		readBy      = "someone"
@@ -431,7 +431,7 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
    <phonenumber>`+from+`</phonenumber>
   </from>
   <summary>`+summary+`</summary>
-  <body uri="`+bodyUri+`"/>
+  <body uri="`+bodyURI+`"/>
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <readat>`+readAtStr+`</readat>
@@ -442,7 +442,7 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Received(xesende.Page(5, 10))
 
@@ -469,8 +469,8 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 	if assert.Equal(1, len(result.Messages)) {
 		message := result.Messages[0]
 
-		assert.Equal(id, message.Id)
-		assert.Equal(uri, message.Uri)
+		assert.Equal(id, message.ID)
+		assert.Equal(uri, message.URI)
 		assert.Equal(reference, message.Reference)
 		assert.Equal(status, message.Status)
 		assert.Equal(receivedAt, message.ReceivedAt)
@@ -478,7 +478,7 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 		assert.Equal(to, message.To)
 		assert.Equal(from, message.From)
 		assert.Equal(summary, message.Summary)
-		assert.Equal(bodyUri, message.BodyUri)
+		assert.Equal(bodyURI, message.BodyURI)
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(readAt, message.ReadAt)
@@ -499,7 +499,7 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 		to          = "4538224364236"
 		from        = "428377843"
 		summary     = "SUM"
-		bodyUri     = "http://rrehekr"
+		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
 		parts       = 1
 		readBy      = "someone"
@@ -530,7 +530,7 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
    <phonenumber>`+from+`</phonenumber>
   </from>
   <summary>`+summary+`</summary>
-  <body uri="`+bodyUri+`"/>
+  <body uri="`+bodyURI+`"/>
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <readat>`+readAtStr+`</readat>
@@ -541,7 +541,7 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Received(xesende.Between(messagesFrom, messagesTo))
 
@@ -568,8 +568,8 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 	if assert.Equal(1, len(result.Messages)) {
 		message := result.Messages[0]
 
-		assert.Equal(id, message.Id)
-		assert.Equal(uri, message.Uri)
+		assert.Equal(id, message.ID)
+		assert.Equal(uri, message.URI)
 		assert.Equal(reference, message.Reference)
 		assert.Equal(status, message.Status)
 		assert.Equal(receivedAt, message.ReceivedAt)
@@ -577,7 +577,7 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 		assert.Equal(to, message.To)
 		assert.Equal(from, message.From)
 		assert.Equal(summary, message.Summary)
-		assert.Equal(bodyUri, message.BodyUri)
+		assert.Equal(bodyURI, message.BodyURI)
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(readAt, message.ReadAt)

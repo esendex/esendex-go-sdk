@@ -6,14 +6,17 @@ import (
 	"time"
 )
 
+// BatchesResponse is a list of returned message batches along with the paging
+// information.
 type BatchesResponse struct {
 	Paging
 	Batches []BatchResponse
 }
 
+// BatchResponse is a single sent batch.
 type BatchResponse struct {
-	Id                 string
-	Uri                string
+	ID                 string
+	URI                string
 	CreatedAt          time.Time
 	BatchSize          int
 	PersistedBatchSize int
@@ -23,6 +26,7 @@ type BatchResponse struct {
 	Name               string
 }
 
+// Batches returns a list of batches sent by the authenticated user.
 func (c *Client) Batches() (*BatchesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.1/messagebatches", nil)
 	if err != nil {
@@ -58,8 +62,8 @@ func (c *Client) Batches() (*BatchesResponse, error) {
 		}
 
 		response.Batches[i] = BatchResponse{
-			Id:                 batch.Id,
-			Uri:                batch.Uri,
+			ID:                 batch.ID,
+			URI:                batch.URI,
 			CreatedAt:          batch.CreatedAt,
 			BatchSize:          batch.BatchSize,
 			PersistedBatchSize: batch.PersistedBatchSize,
@@ -81,8 +85,8 @@ type messageBatchesResponse struct {
 }
 
 type messageBatchResponse struct {
-	Id                 string                       `xml:"id,attr"`
-	Uri                string                       `xml:"uri,attr"`
+	ID                 string                       `xml:"id,attr"`
+	URI                string                       `xml:"uri,attr"`
 	CreatedAt          time.Time                    `xml:"createdat"`
 	BatchSize          int                          `xml:"batchsize"`
 	PersistedBatchSize int                          `xml:"persistedbatchsize"`

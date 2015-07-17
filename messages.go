@@ -6,20 +6,24 @@ import (
 	"time"
 )
 
+// Paging gives the details of the page that was accessed.
 type Paging struct {
 	StartIndex int
 	Count      int
 	TotalCount int
 }
 
+// MessagesResponse is a list of returned messages along with the paging
+// information.
 type MessagesResponse struct {
 	Paging
 	Messages []MessageResponse
 }
 
+// MessageResponse is a single sent message.
 type MessageResponse struct {
-	Id           string
-	Uri          string
+	ID           string
+	URI          string
 	Reference    string
 	Status       string
 	LastStatusAt time.Time
@@ -28,20 +32,23 @@ type MessageResponse struct {
 	To           string
 	From         string
 	Summary      string
-	BodyUri      string
+	BodyURI      string
 	Direction    string
 	Parts        int
 	Username     string
 }
 
+// MessagesReceivedResponse is a list of received messages along with the paging
+// information.
 type MessagesReceivedResponse struct {
 	Paging
 	Messages []MessageReceivedResponse
 }
 
+// MessageReceivedResponse is a single received message.
 type MessageReceivedResponse struct {
-	Id         string
-	Uri        string
+	ID         string
+	URI        string
 	Reference  string
 	Status     string
 	ReceivedAt time.Time
@@ -49,7 +56,7 @@ type MessageReceivedResponse struct {
 	To         string
 	From       string
 	Summary    string
-	BodyUri    string
+	BodyURI    string
 	Direction  string
 	Parts      int
 	ReadAt     time.Time
@@ -88,8 +95,8 @@ func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 
 	for i, message := range v.Messages {
 		response.Messages[i] = MessageResponse{
-			Id:           message.Id,
-			Uri:          message.Uri,
+			ID:           message.ID,
+			URI:          message.URI,
 			Reference:    message.Reference,
 			Status:       message.Status,
 			LastStatusAt: message.LastStatusAt.Time,
@@ -98,7 +105,7 @@ func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 			To:           message.To,
 			From:         message.From,
 			Summary:      message.Summary,
-			BodyUri:      message.Body.Uri,
+			BodyURI:      message.Body.URI,
 			Direction:    message.Direction,
 			Parts:        message.Parts,
 			Username:     message.Username,
@@ -140,8 +147,8 @@ func (c *Client) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 
 	for i, message := range v.Messages {
 		response.Messages[i] = MessageReceivedResponse{
-			Id:         message.Id,
-			Uri:        message.Uri,
+			ID:         message.ID,
+			URI:        message.URI,
 			Reference:  message.Reference,
 			Status:     message.Status,
 			ReceivedAt: message.ReceivedAt.Time,
@@ -149,7 +156,7 @@ func (c *Client) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 			To:         message.To,
 			From:       message.From,
 			Summary:    message.Summary,
-			BodyUri:    message.Body.Uri,
+			BodyURI:    message.Body.URI,
 			Direction:  message.Direction,
 			Parts:      message.Parts,
 			ReadAt:     message.ReadAt.Time,
@@ -178,8 +185,8 @@ func (c *Client) Message(id string) (*MessageResponse, error) {
 	}
 
 	response := &MessageResponse{
-		Id:           v.Id,
-		Uri:          v.Uri,
+		ID:           v.ID,
+		URI:          v.URI,
 		Reference:    v.Reference,
 		Status:       v.Status,
 		LastStatusAt: v.LastStatusAt.Time,
@@ -188,7 +195,7 @@ func (c *Client) Message(id string) (*MessageResponse, error) {
 		To:           v.To,
 		From:         v.From,
 		Summary:      v.Summary,
-		BodyUri:      v.Body.Uri,
+		BodyURI:      v.Body.URI,
 		Direction:    v.Direction,
 		Parts:        v.Parts,
 		Username:     v.Username,
@@ -206,8 +213,8 @@ type messageHeadersResponse struct {
 }
 
 type messageHeadersResponseMessageHeader struct {
-	Id           string            `xml:"id,attr"`
-	Uri          string            `xml:"uri,attr"`
+	ID           string            `xml:"id,attr"`
+	URI          string            `xml:"uri,attr"`
 	Reference    string            `xml:"reference"`
 	Status       string            `xml:"status"`
 	LastStatusAt messageHeaderTime `xml:"laststatusat"`
@@ -217,7 +224,7 @@ type messageHeadersResponseMessageHeader struct {
 	From         string            `xml:"from>phonenumber"`
 	Summary      string            `xml:"summary"`
 	Body         struct {
-		Uri string `xml:"uri,attr"`
+		URI string `xml:"uri,attr"`
 	} `xml:"body"`
 	Direction string `xml:"direction"`
 	Parts     int    `xml:"parts"`
@@ -233,8 +240,8 @@ type inboxResponse struct {
 }
 
 type inboxResponseMessageHeader struct {
-	Id         string            `xml:"id,attr"`
-	Uri        string            `xml:"uri,attr"`
+	ID         string            `xml:"id,attr"`
+	URI        string            `xml:"uri,attr"`
 	Reference  string            `xml:"reference"`
 	Status     string            `xml:"status"`
 	ReceivedAt messageHeaderTime `xml:"receivedat"`
@@ -243,7 +250,7 @@ type inboxResponseMessageHeader struct {
 	From       string            `xml:"from>phonenumber"`
 	Summary    string            `xml:"summary"`
 	Body       struct {
-		Uri string `xml:"uri,attr"`
+		URI string `xml:"uri,attr"`
 	} `xml:"body"`
 	Direction string            `xml:"direction"`
 	Parts     int               `xml:"parts"`

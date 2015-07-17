@@ -19,20 +19,20 @@ func ExampleAccountClient_Send() {
 
 func TestSendSingleMessage(t *testing.T) {
 	const (
-		batchId    = "batchId"
-		messageId  = "messageId"
-		messageUri = "messageUri"
+		batchID    = "batchID"
+		messageID  = "messageID"
+		messageURI = "messageURI"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
-<messageheaders batchid="`+batchId+`" xmlns="http://api.esendex.com/ns/">
-  <messageheader uri="`+messageUri+`" id="`+messageId+`" />
+<messageheaders batchid="`+batchID+`" xmlns="http://api.esendex.com/ns/">
+  <messageheader uri="`+messageURI+`" id="`+messageID+`" />
 </messageheaders>`, 200, map[string]string{})
 	s := httptest.NewServer(h)
 	defer s.Close()
 
 	client := xesende.New("user", "pass")
-	client.BaseUrl, _ = url.Parse(s.URL)
+	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account("EXWHATEVS")
 
@@ -52,9 +52,9 @@ func TestSendSingleMessage(t *testing.T) {
 		assert.Equal("pass", pass)
 	}
 
-	assert.Equal(batchId, result.BatchId)
+	assert.Equal(batchID, result.BatchID)
 
 	assert.Equal(1, len(result.Messages))
-	assert.Equal(messageId, result.Messages[0].Id)
-	assert.Equal(messageUri, result.Messages[0].Uri)
+	assert.Equal(messageID, result.Messages[0].ID)
+	assert.Equal(messageURI, result.Messages[0].URI)
 }
