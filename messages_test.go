@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func ExampleMessagesClient_Sent() {
+func ExampleClient_Sent() {
 	client := xesende.New("user@example.com", "pass")
 
 	response, err := client.Sent()
@@ -26,7 +26,7 @@ func ExampleMessagesClient_Sent() {
 	}
 }
 
-func ExampleMessagesClient_Received() {
+func ExampleClient_Received() {
 	client := xesende.New("user@example.com", "pass")
 
 	now := time.Now()
