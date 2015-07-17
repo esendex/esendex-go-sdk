@@ -186,3 +186,76 @@ func TestMessagesSentWithPaging(t *testing.T) {
 		assert.Equal(username, message.Username)
 	}
 }
+
+func TestMessagesById(t *testing.T) {
+	const (
+		id          = "messageheaderid"
+		uri         = "http://somemessageheader"
+		reference   = "EXETRTRE"
+		status      = "STATUS"
+		messageType = "TYPE"
+		to          = "4538224364236"
+		from        = "428377843"
+		summary     = "SUM"
+		bodyUri     = "http://rrehekr"
+		direction   = "OUT"
+		parts       = 1
+		username    = "user"
+	)
+
+	var (
+		lastStatusAt    = time.Date(2012, 1, 1, 12, 0, 5, 0, time.UTC)
+		lastStatusAtStr = "2012-01-01T12:00:05.000"
+		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
+		submittedAtStr  = "2012-01-01T12:00:02.000"
+	)
+
+	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
+<messageheader id="`+id+`" uri="`+uri+`" xmlns="http://api.esendex.com/ns/">
+ <reference>`+reference+`</reference>
+ <status>`+status+`</status>
+ <laststatusat>`+lastStatusAtStr+`</laststatusat>
+ <submittedat>`+submittedAtStr+`</submittedat>
+ <type>`+messageType+`</type>
+ <to>
+   <phonenumber>`+to+`</phonenumber>
+ </to>
+ <from>
+  <phonenumber>`+from+`</phonenumber>
+ </from>
+ <summary>`+summary+`</summary>
+ <body uri="`+bodyUri+`"/>
+ <direction>`+direction+`</direction>
+ <parts>`+strconv.Itoa(parts)+`</parts>
+ <username>`+username+`</username>
+</messageheader>`, 200, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := xesende.New("user", "pass")
+	client.BaseUrl, _ = url.Parse(s.URL)
+
+	result, err := client.Messages.ById(id)
+
+	assert := assert.New(t)
+
+	assert.Nil(err)
+
+	assert.Equal("GET", h.Request.Method)
+	assert.Equal("/v1.0/messageheaders/"+id, h.Request.URL.String())
+
+	assert.Equal(id, result.Id)
+	assert.Equal(uri, result.Uri)
+	assert.Equal(reference, result.Reference)
+	assert.Equal(status, result.Status)
+	assert.Equal(lastStatusAt, result.LastStatusAt)
+	assert.Equal(submittedAt, result.SubmittedAt)
+	assert.Equal(messageType, result.Type)
+	assert.Equal(to, result.To)
+	assert.Equal(from, result.From)
+	assert.Equal(summary, result.Summary)
+	assert.Equal(bodyUri, result.BodyUri)
+	assert.Equal(direction, result.Direction)
+	assert.Equal(parts, result.Parts)
+	assert.Equal(username, result.Username)
+}

@@ -14,10 +14,10 @@ type Paging struct {
 
 type MessagesResponse struct {
 	Paging
-	Messages []MessagesResponseMessage
+	Messages []MessageResponse
 }
 
-type MessagesResponseMessage struct {
+type MessageResponse struct {
 	Id           string
 	Uri          string
 	Reference    string
@@ -64,11 +64,11 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 			Count:      v.Count,
 			TotalCount: v.TotalCount,
 		},
-		Messages: make([]MessagesResponseMessage, len(v.Messages)),
+		Messages: make([]MessageResponse, len(v.Messages)),
 	}
 
 	for i, message := range v.Messages {
-		response.Messages[i] = MessagesResponseMessage{
+		response.Messages[i] = MessageResponse{
 			Id:           message.Id,
 			Uri:          message.Uri,
 			Reference:    message.Reference,
@@ -84,6 +84,42 @@ func (c *MessagesClient) Sent(opts ...Option) (*MessagesResponse, error) {
 			Parts:        message.Parts,
 			Username:     message.Username,
 		}
+	}
+
+	return response, nil
+}
+
+func (c *MessagesClient) ById(id string) (*MessageResponse, error) {
+	req, err := c.NewRequest("GET", "/v1.0/messageheaders/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var v messageHeadersResponseMessageHeader
+	resp, err := c.Do(req, &v)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New("Expected 200")
+	}
+
+	response := &MessageResponse{
+		Id:           v.Id,
+		Uri:          v.Uri,
+		Reference:    v.Reference,
+		Status:       v.Status,
+		LastStatusAt: v.LastStatusAt.Time,
+		SubmittedAt:  v.SubmittedAt.Time,
+		Type:         v.Type,
+		To:           v.To,
+		From:         v.From,
+		Summary:      v.Summary,
+		BodyUri:      v.Body.Uri,
+		Direction:    v.Direction,
+		Parts:        v.Parts,
+		Username:     v.Username,
 	}
 
 	return response, nil
