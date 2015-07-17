@@ -3,6 +3,7 @@ package xesende
 import (
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // Option is a function that mutates a request.
@@ -15,6 +16,17 @@ func Page(startIndex, count int) Option {
 
 		q.Add("startindex", strconv.Itoa(startIndex))
 		q.Add("count", strconv.Itoa(count))
+
+		r.URL.RawQuery = q.Encode()
+	}
+}
+
+func Between(start, finish time.Time) Option {
+	return func(r *http.Request) {
+		q := r.URL.Query()
+
+		q.Add("start", start.Format(time.RFC3339))
+		q.Add("finish", finish.Format(time.RFC3339))
 
 		r.URL.RawQuery = q.Encode()
 	}
