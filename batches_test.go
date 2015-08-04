@@ -123,3 +123,77 @@ func TestBatchesWithPaging(t *testing.T) {
 	assert.Equal("5", query.Get("startindex"))
 	assert.Equal("10", query.Get("count"))
 }
+
+func TestBatch(t *testing.T) {
+	const (
+		startIndex         = 0
+		count              = 15
+		totalCount         = 15
+		id                 = "messagebatchid"
+		uri                = "messagebatchuri"
+		batchSize          = 1
+		persistedBatchSize = 1
+		accountReference   = "EXHEYEYE"
+		createdBy          = "efiwewe@example.com"
+		name               = "my cool batch"
+	)
+
+	var (
+		status       = map[string]int{"submitted": 1}
+		createdAt    = time.Date(2012, 1, 1, 12, 0, 0, 0, time.UTC)
+		createdAtStr = "2012-01-01T12:00:00Z"
+	)
+
+	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
+<messagebatch id="`+id+`" uri="`+uri+`" xmlns="http://api.esendex.com/ns/">
+ <createdat>`+createdAtStr+`</createdat>
+ <batchsize>`+strconv.Itoa(batchSize)+`</batchsize>
+ <persistedbatchsize>`+strconv.Itoa(persistedBatchSize)+`</persistedbatchsize>
+ <status>
+  <acknowledged>0</acknowledged>
+  <authorisationfailed>0</authorisationfailed>
+  <connecting>0</connecting>
+  <delivered>0</delivered>
+  <failed>0</failed>
+  <partiallydelivered>0</partiallydelivered>
+  <rejected>0</rejected>
+  <scheduled>0</scheduled>
+  <sent>0</sent>
+  <submitted>1</submitted>
+  <validityperiodexpired>0</validityperiodexpired>
+  <cancelled>0</cancelled>
+ </status>
+ <accountreference>`+accountReference+`</accountreference>
+ <createdby>`+createdBy+`</createdby>
+ <name>`+name+`</name>
+</messagebatch>`, 200, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := xesende.New("user", "pass")
+	client.BaseURL, _ = url.Parse(s.URL)
+
+	result, err := client.Batch(id)
+
+	assert := assert.New(t)
+
+	assert.Nil(err)
+
+	assert.Equal("GET", h.Request.Method)
+	assert.Equal("/v1.1/messagebatches/"+id, h.Request.URL.String())
+
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
+
+	assert.Equal(id, result.ID)
+	assert.Equal(uri, result.URI)
+	assert.Equal(createdAt, result.CreatedAt)
+	assert.Equal(batchSize, result.BatchSize)
+	assert.Equal(persistedBatchSize, result.PersistedBatchSize)
+	assert.Equal(status, result.Status)
+	assert.Equal(accountReference, result.AccountReference)
+	assert.Equal(createdBy, result.CreatedBy)
+	assert.Equal(name, result.Name)
+}

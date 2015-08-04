@@ -81,6 +81,46 @@ func (c *Client) Batches(opts ...Option) (*BatchesResponse, error) {
 	return response, nil
 }
 
+// Batch returns the batch with the given id.
+func (c *Client) Batch(id string) (*BatchResponse, error) {
+	req, err := c.newRequest("GET", "/v1.1/messagebatches/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var v messageBatchResponse
+	resp, err := c.do(req, &v)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New("Expected 200")
+	}
+
+	status := map[string]int{}
+
+	for _, s := range v.Status.List {
+		if s.Value > 0 {
+			status[s.XMLName.Local] = s.Value
+		}
+	}
+
+	response := &BatchResponse{
+		ID:                 v.ID,
+		URI:                v.URI,
+		CreatedAt:          v.CreatedAt,
+		BatchSize:          v.BatchSize,
+		PersistedBatchSize: v.PersistedBatchSize,
+		Status:             status,
+		AccountReference:   v.AccountReference,
+		CreatedBy:          v.CreatedBy,
+		Name:               v.Name,
+	}
+
+	return response, nil
+}
+
 type messageBatchesResponse struct {
 	StartIndex int                    `xml:"startindex,attr"`
 	Count      int                    `xml:"count,attr"`
