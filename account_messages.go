@@ -1,57 +1,21 @@
 package xesende
 
-import "errors"
+import (
+	"errors"
+	"net/http"
+)
 
 // Sent returns a list of messages sent by the account.
 func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
-	req, err := c.newRequest("GET", "/v1.0/messageheaders?accountReference="+c.reference, nil)
-	if err != nil {
-		return nil, err
+	accountOption := func(r *http.Request) {
+		q := r.URL.Query()
+
+		q.Add("accountReference", c.reference)
+
+		r.URL.RawQuery = q.Encode()
 	}
 
-	for _, opt := range opts {
-		opt(req)
-	}
-
-	var v messageHeadersResponse
-	resp, err := c.do(req, &v)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("Expected 200")
-	}
-
-	response := &MessagesResponse{
-		Paging: Paging{
-			StartIndex: v.StartIndex,
-			Count:      v.Count,
-			TotalCount: v.TotalCount,
-		},
-		Messages: make([]MessageResponse, len(v.Messages)),
-	}
-
-	for i, message := range v.Messages {
-		response.Messages[i] = MessageResponse{
-			ID:           message.ID,
-			URI:          message.URI,
-			Reference:    message.Reference,
-			Status:       message.Status,
-			LastStatusAt: message.LastStatusAt.Time,
-			SubmittedAt:  message.SubmittedAt.Time,
-			Type:         message.Type,
-			To:           message.To,
-			From:         message.From,
-			Summary:      message.Summary,
-			BodyURI:      message.Body.URI,
-			Direction:    message.Direction,
-			Parts:        message.Parts,
-			Username:     message.Username,
-		}
-	}
-
-	return response, nil
+	return c.Client.Sent(append(opts, accountOption)...)
 }
 
 // Received returns the messages sent to the account.
