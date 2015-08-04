@@ -259,6 +259,7 @@ type inboxResponseMessageHeader struct {
 }
 
 const messageHeaderTimeFormat = "2006-01-02T15:04:05.999999999"
+const messageHeaderTimeFormatZ = "2006-01-02T15:04:05.999999999Z"
 
 type messageHeaderTime struct {
 	time.Time
@@ -271,7 +272,10 @@ func (t messageHeaderTime) MarshalText() ([]byte, error) {
 func (t *messageHeaderTime) UnmarshalText(data []byte) error {
 	g, err := time.ParseInLocation(messageHeaderTimeFormat, string(data), time.UTC)
 	if err != nil {
-		return err
+		g, err = time.ParseInLocation(messageHeaderTimeFormatZ, string(data), time.UTC)
+		if err != nil {
+			return err
+		}
 	}
 	*t = messageHeaderTime{g}
 	return nil

@@ -245,9 +245,9 @@ func TestMessagesByID(t *testing.T) {
 
 	var (
 		lastStatusAt    = time.Date(2012, 1, 1, 12, 0, 5, 0, time.UTC)
-		lastStatusAtStr = "2012-01-01T12:00:05.000"
+		lastStatusAtStr = "2012-01-01T12:00:05.000Z"
 		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
-		submittedAtStr  = "2012-01-01T12:00:02.000"
+		submittedAtStr  = "2012-01-01T12:00:02.000Z"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
