@@ -1,31 +1,12 @@
 # xesende
 
-A client for the [Esendex REST API][Esendex].
+A client for the [Esendex REST API][esendex].
 
-
-## dream
-
-``` go
-func main() {
-  client := xesende.New(user, pass)
-
-  paging := xesende.Paging(0, 10)
-
-  messages, err := client.Messages.Sent(paging)
-  // ...
-  paging = paging.NextPage()
-  moremessages, _ := client.Messages.Sent(paging)
-
-  err := client.Send(xesende.Messages{
-    {
-      To: "...",
-      Body: "...",
-    },
-  })
-
-  // etc.
-}
+``` bash
+$ go get hawx.me/code/xesende
 ```
 
+See the [documentation][docs].
 
-[Esendex]: http://developers.esendex.com/APIs/REST-API
+[docs]: http://godoc.org/hawx.me/code/xesende
+[esendex]: http://developers.esendex.com/APIs/REST-API
