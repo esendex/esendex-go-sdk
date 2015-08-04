@@ -27,10 +27,14 @@ type BatchResponse struct {
 }
 
 // Batches returns a list of batches sent by the authenticated user.
-func (c *Client) Batches() (*BatchesResponse, error) {
+func (c *Client) Batches(opts ...Option) (*BatchesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.1/messagebatches", nil)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, opt := range opts {
+		opt(req)
 	}
 
 	var v messageBatchesResponse

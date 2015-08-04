@@ -94,3 +94,32 @@ func TestBatches(t *testing.T) {
 		assert.Equal(name, batch.Name)
 	}
 }
+
+func TestBatchesWithPaging(t *testing.T) {
+	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
+<messagebatches startindex="4" count="10" totalcount="200" xmlns="http://api.esendex.com/ns/">
+</messagebatches>`, 200, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := xesende.New("user", "pass")
+	client.BaseURL, _ = url.Parse(s.URL)
+
+	_, err := client.Batches(xesende.Page(5, 10))
+
+	assert := assert.New(t)
+
+	assert.Nil(err)
+
+	assert.Equal("GET", h.Request.Method)
+	assert.Equal("/v1.1/messagebatches", h.Request.URL.Path)
+
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
+
+	query := h.Request.URL.Query()
+	assert.Equal("5", query.Get("startindex"))
+	assert.Equal("10", query.Get("count"))
+}
