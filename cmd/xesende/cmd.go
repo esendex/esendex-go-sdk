@@ -1,11 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 
+	"github.com/gobs/pretty"
 	"hawx.me/code/hadfield"
 	"hawx.me/code/xesende"
 )
@@ -72,8 +71,7 @@ func ReceivedCmd(client *xesende.Client) *hadfield.Command {
 				log.Fatal(err)
 			}
 
-			data, _ := json.MarshalIndent(resp.Messages, "", "  ")
-			fmt.Printf("%s\r\n", data)
+			pretty.PrettyPrint(resp.Messages)
 		},
 	}
 
@@ -99,8 +97,7 @@ func SentCmd(client *xesende.Client) *hadfield.Command {
 				log.Fatal(err)
 			}
 
-			data, _ := json.MarshalIndent(resp.Messages, "", "  ")
-			fmt.Printf("%s\r\n", data)
+			pretty.PrettyPrint(resp.Messages)
 		},
 	}
 
@@ -126,8 +123,7 @@ func MessageCmd(client *xesende.Client) *hadfield.Command {
 				log.Fatal(err)
 			}
 
-			data, _ := json.MarshalIndent(resp, "", "  ")
-			fmt.Printf("%s\r\n", data)
+			pretty.PrettyPrint(resp)
 		},
 	}
 }
