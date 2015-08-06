@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -48,6 +49,7 @@ func main() {
 	commands := hadfield.Commands{
 		ReceivedCmd(client),
 		SentCmd(client),
+		MessageCmd(client),
 	}
 
 	hadfield.Run(commands, templates)
@@ -70,9 +72,8 @@ func ReceivedCmd(client *xesende.Client) *hadfield.Command {
 				log.Fatal(err)
 			}
 
-			for _, message := range resp.Messages {
-				fmt.Printf("At: %s \r\nFrom: %s \r\nBody: %s\r\n", message.ReceivedAt, message.From, message.BodyURI)
-			}
+			data, _ := json.MarshalIndent(resp.Messages, "", "  ")
+			fmt.Printf("%s\r\n", data)
 		},
 	}
 
@@ -98,13 +99,35 @@ func SentCmd(client *xesende.Client) *hadfield.Command {
 				log.Fatal(err)
 			}
 
-			for _, message := range resp.Messages {
-				fmt.Printf("At: %s \r\nTo: %s \r\nBody: %s\r\n\r\n", message.SubmittedAt, message.To, message.BodyURI)
-			}
+			data, _ := json.MarshalIndent(resp.Messages, "", "  ")
+			fmt.Printf("%s\r\n", data)
 		},
 	}
 
 	cmd.Flag.IntVar(&page, "page", 1, "")
 
 	return cmd
+}
+
+func MessageCmd(client *xesende.Client) *hadfield.Command {
+	return &hadfield.Command{
+		Usage: "message MESSAGEID",
+		Short: "displays a messag",
+		Long: `
+  Message displays the details for a message.
+`,
+		Run: func(cmd *hadfield.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("Require MESSAGEID parameter")
+			}
+
+			resp, err := client.Message(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			data, _ := json.MarshalIndent(resp, "", "  ")
+			fmt.Printf("%s\r\n", data)
+		},
+	}
 }
