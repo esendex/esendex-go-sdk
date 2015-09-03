@@ -24,14 +24,19 @@ func pageOpts(page int) xesende.Option {
 }
 
 var templates = hadfield.Templates{
-	Help: `usage: example [command] [arguments]
+	Help: `usage: xesende [command] [arguments]
 
-  This is an example.
+  A command line client for the Esendex REST API.
+
+  Options:
+    --username USER    # Username to authenticate with
+    --password PASS    # Password to authenticate with
+    --help             # Display this message
 
   Commands: {{range .}}
     {{.Name | printf "%-15s"}} # {{.Short}}{{end}}
 `,
-	Command: `usage: example {{.Usage}}
+	Command: `usage: xesende {{.Usage}}
 {{.Long}}
 `,
 }
@@ -40,7 +45,7 @@ func main() {
 	flag.Parse()
 
 	if *username == "" || *password == "" {
-		log.Fatal("Require --username and --password options")
+		log.Fatal("Both --username and --password options are required.")
 	}
 
 	client := xesende.New(*username, *password)
@@ -63,7 +68,7 @@ func ReceivedCmd(client *xesende.Client) *hadfield.Command {
 		Long: `
   Received displays a list of received messages.
 
-    --page <num>    # Display given page
+    --page NUM       # Display given page
 `,
 		Run: func(cmd *hadfield.Command, args []string) {
 			resp, err := client.Received()
@@ -89,7 +94,7 @@ func SentCmd(client *xesende.Client) *hadfield.Command {
 		Long: `
   Sent displays a list of sent messages.
 
-    --page <num>    # Display given page
+    --page NUM       # Display given page
 `,
 		Run: func(cmd *hadfield.Command, args []string) {
 			resp, err := client.Sent(pageOpts(page))
