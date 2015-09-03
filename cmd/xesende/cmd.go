@@ -51,15 +51,16 @@ func main() {
 	client := xesende.New(*username, *password)
 
 	commands := hadfield.Commands{
-		ReceivedCmd(client),
-		SentCmd(client),
-		MessageCmd(client),
+		receivedCmd(client),
+		sentCmd(client),
+		messageCmd(client),
+		accountsCmd(client),
 	}
 
 	hadfield.Run(commands, templates)
 }
 
-func ReceivedCmd(client *xesende.Client) *hadfield.Command {
+func receivedCmd(client *xesende.Client) *hadfield.Command {
 	var page int
 
 	cmd := &hadfield.Command{
@@ -85,7 +86,7 @@ func ReceivedCmd(client *xesende.Client) *hadfield.Command {
 	return cmd
 }
 
-func SentCmd(client *xesende.Client) *hadfield.Command {
+func sentCmd(client *xesende.Client) *hadfield.Command {
 	var page int
 
 	cmd := &hadfield.Command{
@@ -111,10 +112,10 @@ func SentCmd(client *xesende.Client) *hadfield.Command {
 	return cmd
 }
 
-func MessageCmd(client *xesende.Client) *hadfield.Command {
+func messageCmd(client *xesende.Client) *hadfield.Command {
 	return &hadfield.Command{
 		Usage: "message MESSAGEID",
-		Short: "displays a messag",
+		Short: "displays a message",
 		Long: `
   Message displays the details for a message.
 `,
@@ -129,6 +130,24 @@ func MessageCmd(client *xesende.Client) *hadfield.Command {
 			}
 
 			pretty.PrettyPrint(resp)
+		},
+	}
+}
+
+func accountsCmd(client *xesende.Client) *hadfield.Command {
+	return &hadfield.Command{
+		Usage: "accounts",
+		Short: "list accounts",
+		Long: `
+  List accounts available to the user.
+`,
+		Run: func(cmd *hadfield.Command, args []string) {
+			resp, err := client.Accounts()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			pretty.PrettyPrint(resp.Accounts)
 		},
 	}
 }
