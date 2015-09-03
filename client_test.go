@@ -30,8 +30,8 @@ func (h *recordingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(key, value)
 	}
 
-	w.Write([]byte(h.body))
 	w.WriteHeader(h.code)
+	w.Write([]byte(h.body))
 }
 
 func readAll(r io.Reader) string {

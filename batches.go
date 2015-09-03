@@ -121,6 +121,24 @@ func (c *Client) Batch(id string) (*BatchResponse, error) {
 	return response, nil
 }
 
+func (c *Client) CancelBatch(id string) error {
+	req, err := c.newRequest("DELETE", "/v1.1/messagebatches/"+id+"/schedule", nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.do(req, nil)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 204 {
+		return errors.New("Expected 204")
+	}
+
+	return nil
+}
+
 type messageBatchesResponse struct {
 	StartIndex int                    `xml:"startindex,attr"`
 	Count      int                    `xml:"count,attr"`

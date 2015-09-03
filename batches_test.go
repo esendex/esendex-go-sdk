@@ -197,3 +197,26 @@ func TestBatch(t *testing.T) {
 	assert.Equal(createdBy, result.CreatedBy)
 	assert.Equal(name, result.Name)
 }
+
+func TestCancelBatch(t *testing.T) {
+	h := newRecordingHandler("", 204, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := xesende.New("user", "pass")
+	client.BaseURL, _ = url.Parse(s.URL)
+
+	err := client.CancelBatch("batchid")
+
+	assert := assert.New(t)
+
+	assert.Nil(err)
+
+	assert.Equal("DELETE", h.Request.Method)
+	assert.Equal("/v1.1/messagebatches/batchid/schedule", h.Request.URL.String())
+
+	if user, pass, ok := h.Request.BasicAuth(); assert.True(ok) {
+		assert.Equal("user", user)
+		assert.Equal("pass", pass)
+	}
+}
