@@ -75,13 +75,9 @@ func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 	}
 
 	var v messageHeadersResponse
-	resp, err := c.do(req, &v)
-	if err != nil {
-		return nil, err
-	}
 
-	if resp.StatusCode != 200 {
-		return nil, errors.New("Expected 200")
+	if _, err := c.do(req, &v); err != nil {
+		return nil, err
 	}
 
 	response := &MessagesResponse{

@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"net/http/httptest"
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"hawx.me/code/xesende"
 )
 
 func TestAccountMessagesSent(t *testing.T) {
@@ -61,7 +60,7 @@ func TestAccountMessagesSent(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account("EXHEY")
@@ -157,7 +156,7 @@ func TestAccountMessagesReceived(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account("EXHEY")

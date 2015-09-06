@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"net/http/httptest"
@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	xesende "."
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +20,7 @@ func TestAccounts(t *testing.T) {
 		accountType       = "Professional"
 		messagesRemaining = 2322
 		role              = "CoolUser"
-		settingsUri       = "http://somesettings"
+		settingsURI       = "http://somesettings"
 	)
 
 	var (
@@ -39,13 +38,13 @@ func TestAccounts(t *testing.T) {
   <messagesremaining>`+strconv.Itoa(messagesRemaining)+`</messagesremaining>
   <expireson>`+expiresOnStr+`</expireson>
   <role>`+role+`</role>
-  <settings uri="`+settingsUri+`" />
+  <settings uri="`+settingsURI+`" />
  </account>
 </accounts>`, 200, map[string]string{})
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Accounts()
@@ -74,6 +73,6 @@ func TestAccounts(t *testing.T) {
 		assert.Equal(messagesRemaining, account.MessagesRemaining)
 		assert.Equal(expiresOn, account.ExpiresOn)
 		assert.Equal(role, account.Role)
-		assert.Equal(settingsUri, account.SettingsURI)
+		assert.Equal(settingsURI, account.SettingsURI)
 	}
 }

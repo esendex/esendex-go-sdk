@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"fmt"
@@ -9,12 +9,11 @@ import (
 	"testing"
 	"time"
 
-	xesende "."
 	"github.com/stretchr/testify/assert"
 )
 
 func ExampleClient_Sent() {
-	client := xesende.New("user@example.com", "pass")
+	client := New("user@example.com", "pass")
 
 	response, err := client.Sent()
 	if err != nil {
@@ -27,11 +26,11 @@ func ExampleClient_Sent() {
 }
 
 func ExampleClient_Received() {
-	client := xesende.New("user@example.com", "pass")
+	client := New("user@example.com", "pass")
 
 	now := time.Now()
 
-	response, err := client.Received(xesende.Between(now.AddDate(0, -6, 0), now))
+	response, err := client.Received(Between(now.AddDate(0, -6, 0), now))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,7 +90,7 @@ func TestMessagesSent(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Sent()
@@ -130,6 +129,26 @@ func TestMessagesSent(t *testing.T) {
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
 	}
+}
+
+func TestMessagesSentWhenNotOkResponse(t *testing.T) {
+	h := newRecordingHandler(``, 401, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := New("user", "pass")
+	client.BaseURL, _ = url.Parse(s.URL)
+
+	result, err := client.Sent()
+
+	assert := assert.New(t)
+
+	assert.Equal(err, ClientError{
+		Method: "GET",
+		Path:   "/v1.0/messageheaders",
+		Code:   401,
+	})
+	assert.Nil(result)
 }
 
 func TestMessagesSentWithPaging(t *testing.T) {
@@ -182,10 +201,10 @@ func TestMessagesSentWithPaging(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
-	result, err := client.Sent(xesende.Page(5, 10))
+	result, err := client.Sent(Page(5, 10))
 
 	assert := assert.New(t)
 
@@ -272,7 +291,7 @@ func TestMessagesByID(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Message(id)
@@ -350,7 +369,7 @@ func TestMessagesReceived(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Received()
@@ -441,10 +460,10 @@ func TestMessagesReceivedWithPaging(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
-	result, err := client.Received(xesende.Page(5, 10))
+	result, err := client.Received(Page(5, 10))
 
 	assert := assert.New(t)
 
@@ -540,10 +559,10 @@ func TestMessagesReceivedWithDateRange(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
-	result, err := client.Received(xesende.Between(messagesFrom, messagesTo))
+	result, err := client.Received(Between(messagesFrom, messagesTo))
 
 	assert := assert.New(t)
 

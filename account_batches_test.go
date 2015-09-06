@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"net/http/httptest"
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"hawx.me/code/xesende"
 )
 
 func TestAccountBatches(t *testing.T) {
@@ -59,7 +58,7 @@ func TestAccountBatches(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account(accountReference)
@@ -108,12 +107,12 @@ func TestAccountBatchesWithPaging(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account("EXWHAT")
 
-	_, err := account.Batches(xesende.Page(5, 10))
+	_, err := account.Batches(Page(5, 10))
 
 	assert := assert.New(t)
 

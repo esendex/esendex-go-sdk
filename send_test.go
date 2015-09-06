@@ -1,18 +1,17 @@
-package xesende_test
+package xesende
 
 import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
 
-	xesende "."
 	"github.com/stretchr/testify/assert"
 )
 
 func ExampleAccountClient_Send() {
-	accountClient := xesende.New("user@example.com", "pass").Account("EX00000")
+	accountClient := New("user@example.com", "pass").Account("EX00000")
 
-	accountClient.Send([]xesende.Message{
+	accountClient.Send([]Message{
 		{To: "00000000", Body: "Hello"},
 	})
 }
@@ -31,12 +30,12 @@ func TestSendSingleMessage(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	account := client.Account("EXWHATEVS")
 
-	result, err := account.Send([]xesende.Message{
+	result, err := account.Send([]Message{
 		{To: "358973", Body: "HWEYERW"},
 	})
 

@@ -2,6 +2,7 @@ package xesende
 
 import "net/http"
 
+// Batches returns a list of batches sent by the account.
 func (c *AccountClient) Batches(opts ...Option) (*BatchesResponse, error) {
 	accountOption := func(r *http.Request) {
 		q := r.URL.Query()

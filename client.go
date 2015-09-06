@@ -4,6 +4,7 @@ package xesende
 import (
 	"bytes"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -64,8 +65,16 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 
 func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.client.Do(req)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, ClientError{
+			Method: req.Method,
+			Path:   req.URL.Path,
+			Code:   resp.StatusCode,
+		}
+	}
+
 	if err != nil {
-		return nil, err
+		return resp, err
 	}
 
 	defer func() {
@@ -76,7 +85,7 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 
 	if v != nil {
 		if err := xml.NewDecoder(resp.Body).Decode(v); err != nil {
-			return nil, err
+			return resp, err
 		}
 	}
 
@@ -96,4 +105,16 @@ func (c *Client) Account(reference string) *AccountClient {
 		Client:    c,
 		reference: reference,
 	}
+}
+
+// ClientError is the type of error returned when an unexpected (non-200 range)
+// response is returned by the API.
+type ClientError struct {
+	Method string
+	Path   string
+	Code   int
+}
+
+func (e ClientError) Error() string {
+	return fmt.Sprintf("%s %s: %d", e.Method, e.Path, e.Code)
 }

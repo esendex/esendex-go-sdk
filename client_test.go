@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"io"

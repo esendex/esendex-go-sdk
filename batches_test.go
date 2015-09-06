@@ -1,4 +1,4 @@
-package xesende_test
+package xesende
 
 import (
 	"net/http/httptest"
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"hawx.me/code/xesende"
 )
 
 func TestBatches(t *testing.T) {
@@ -59,7 +58,7 @@ func TestBatches(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Batches()
@@ -102,10 +101,10 @@ func TestBatchesWithPaging(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
-	_, err := client.Batches(xesende.Page(5, 10))
+	_, err := client.Batches(Page(5, 10))
 
 	assert := assert.New(t)
 
@@ -170,7 +169,7 @@ func TestBatch(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	result, err := client.Batch(id)
@@ -203,7 +202,7 @@ func TestCancelBatch(t *testing.T) {
 	s := httptest.NewServer(h)
 	defer s.Close()
 
-	client := xesende.New("user", "pass")
+	client := New("user", "pass")
 	client.BaseURL, _ = url.Parse(s.URL)
 
 	err := client.CancelBatch("batchid")

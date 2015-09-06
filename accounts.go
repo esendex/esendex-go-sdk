@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Accounts returns a list of accounts the user is on.
 func (c *Client) Accounts() (*AccountsResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/accounts", nil)
 	if err != nil {
@@ -44,10 +45,12 @@ func (c *Client) Accounts() (*AccountsResponse, error) {
 	return response, nil
 }
 
+// AccountsResponse is a list of accounts.
 type AccountsResponse struct {
 	Accounts []AccountResponse
 }
 
+// AccountResponse is a single account.
 type AccountResponse struct {
 	ID                string
 	URI               string

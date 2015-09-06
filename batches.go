@@ -121,6 +121,8 @@ func (c *Client) Batch(id string) (*BatchResponse, error) {
 	return response, nil
 }
 
+// CancelBatch prevents the messagebatch from being sent if it is scheduled and
+// due to be sent at a point that allows it to be cancelled.
 func (c *Client) CancelBatch(id string) error {
 	req, err := c.newRequest("DELETE", "/v1.1/messagebatches/"+id+"/schedule", nil)
 	if err != nil {
