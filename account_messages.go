@@ -6,7 +6,7 @@ import (
 )
 
 // Sent returns a list of messages sent by the account.
-func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
+func (c *AccountClient) Sent(opts ...Option) (*SentMessagesResponse, error) {
 	accountOption := func(r *http.Request) {
 		q := r.URL.Query()
 
@@ -19,7 +19,7 @@ func (c *AccountClient) Sent(opts ...Option) (*MessagesResponse, error) {
 }
 
 // Received returns the messages sent to the account.
-func (c *AccountClient) Received(opts ...Option) (*MessagesReceivedResponse, error) {
+func (c *AccountClient) Received(opts ...Option) (*ReceivedMessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/inbox/"+c.reference+"/messages", nil)
 	if err != nil {
 		return nil, err
@@ -39,17 +39,17 @@ func (c *AccountClient) Received(opts ...Option) (*MessagesReceivedResponse, err
 		return nil, errors.New("Expected 200")
 	}
 
-	response := &MessagesReceivedResponse{
+	response := &ReceivedMessagesResponse{
 		Paging: Paging{
 			StartIndex: v.StartIndex,
 			Count:      v.Count,
 			TotalCount: v.TotalCount,
 		},
-		Messages: make([]MessageReceivedResponse, len(v.Messages)),
+		Messages: make([]ReceivedMessageResponse, len(v.Messages)),
 	}
 
 	for i, message := range v.Messages {
-		response.Messages[i] = MessageReceivedResponse{
+		response.Messages[i] = ReceivedMessageResponse{
 			ID:         message.ID,
 			URI:        message.URI,
 			Reference:  message.Reference,

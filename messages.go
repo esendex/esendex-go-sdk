@@ -15,13 +15,13 @@ type Paging struct {
 
 // MessagesResponse is a list of returned messages along with the paging
 // information.
-type MessagesResponse struct {
+type SentMessagesResponse struct {
 	Paging
-	Messages []MessageResponse
+	Messages []SentMessageResponse
 }
 
 // MessageResponse is a single sent message.
-type MessageResponse struct {
+type SentMessageResponse struct {
 	ID           string
 	URI          string
 	Reference    string
@@ -38,15 +38,38 @@ type MessageResponse struct {
 	Username     string
 }
 
+// MessageResponse is a single message.
+type MessageResponse struct {
+	ID           string
+	URI          string
+	Reference    string
+	Status       string
+	LastStatusAt time.Time
+	SubmittedAt  time.Time
+	ReceivedAt   time.Time
+	Type         string
+	To           string
+	From         string
+	Summary      string
+	BodyURI      string
+	Direction    string
+	ReadAt       time.Time
+	SentAt       time.Time
+	DeliveredAt  time.Time
+	ReadBy       string
+	Parts        int
+	Username     string
+}
+
 // MessagesReceivedResponse is a list of received messages along with the paging
 // information.
-type MessagesReceivedResponse struct {
+type ReceivedMessagesResponse struct {
 	Paging
-	Messages []MessageReceivedResponse
+	Messages []ReceivedMessageResponse
 }
 
 // MessageReceivedResponse is a single received message.
-type MessageReceivedResponse struct {
+type ReceivedMessageResponse struct {
 	ID         string
 	URI        string
 	Reference  string
@@ -64,7 +87,7 @@ type MessageReceivedResponse struct {
 }
 
 // Sent returns a list of messages sent by the user.
-func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
+func (c *Client) Sent(opts ...Option) (*SentMessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/messageheaders", nil)
 	if err != nil {
 		return nil, err
@@ -80,17 +103,17 @@ func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 		return nil, err
 	}
 
-	response := &MessagesResponse{
+	response := &SentMessagesResponse{
 		Paging: Paging{
 			StartIndex: v.StartIndex,
 			Count:      v.Count,
 			TotalCount: v.TotalCount,
 		},
-		Messages: make([]MessageResponse, len(v.Messages)),
+		Messages: make([]SentMessageResponse, len(v.Messages)),
 	}
 
 	for i, message := range v.Messages {
-		response.Messages[i] = MessageResponse{
+		response.Messages[i] = SentMessageResponse{
 			ID:           message.ID,
 			URI:          message.URI,
 			Reference:    message.Reference,
@@ -112,7 +135,7 @@ func (c *Client) Sent(opts ...Option) (*MessagesResponse, error) {
 }
 
 // Received returns the messages sent to the user.
-func (c *Client) Received(opts ...Option) (*MessagesReceivedResponse, error) {
+func (c *Client) Received(opts ...Option) (*ReceivedMessagesResponse, error) {
 	req, err := c.newRequest("GET", "/v1.0/inbox/messages", nil)
 	if err != nil {
 		return nil, err
@@ -132,17 +155,17 @@ func (c *Client) Received(opts ...Option) (*MessagesReceivedResponse, error) {
 		return nil, errors.New("Expected 200")
 	}
 
-	response := &MessagesReceivedResponse{
+	response := &ReceivedMessagesResponse{
 		Paging: Paging{
 			StartIndex: v.StartIndex,
 			Count:      v.Count,
 			TotalCount: v.TotalCount,
 		},
-		Messages: make([]MessageReceivedResponse, len(v.Messages)),
+		Messages: make([]ReceivedMessageResponse, len(v.Messages)),
 	}
 
 	for i, message := range v.Messages {
-		response.Messages[i] = MessageReceivedResponse{
+		response.Messages[i] = ReceivedMessageResponse{
 			ID:         message.ID,
 			URI:        message.URI,
 			Reference:  message.Reference,
@@ -187,12 +210,17 @@ func (c *Client) Message(id string) (*MessageResponse, error) {
 		Status:       v.Status,
 		LastStatusAt: v.LastStatusAt.Time,
 		SubmittedAt:  v.SubmittedAt.Time,
+		ReceivedAt:   v.ReceivedAt.Time,
 		Type:         v.Type,
 		To:           v.To,
 		From:         v.From,
 		Summary:      v.Summary,
 		BodyURI:      v.Body.URI,
 		Direction:    v.Direction,
+		ReadAt:       v.ReadAt.Time,
+		SentAt:       v.SentAt.Time,
+		DeliveredAt:  v.DeliveredAt.Time,
+		ReadBy:       v.ReadBy,
 		Parts:        v.Parts,
 		Username:     v.Username,
 	}
@@ -215,6 +243,7 @@ type messageHeadersResponseMessageHeader struct {
 	Status       string            `xml:"status"`
 	LastStatusAt messageHeaderTime `xml:"laststatusat"`
 	SubmittedAt  messageHeaderTime `xml:"submittedat"`
+	ReceivedAt   messageHeaderTime `xml:"receivedat"`
 	Type         string            `xml:"type"`
 	To           string            `xml:"to>phonenumber"`
 	From         string            `xml:"from>phonenumber"`
@@ -222,9 +251,13 @@ type messageHeadersResponseMessageHeader struct {
 	Body         struct {
 		URI string `xml:"uri,attr"`
 	} `xml:"body"`
-	Direction string `xml:"direction"`
-	Parts     int    `xml:"parts"`
-	Username  string `xml:"username"`
+	Direction   string            `xml:"direction"`
+	ReadAt      messageHeaderTime `xml:"readat"`
+	SentAt      messageHeaderTime `xml:"sentat"`
+	DeliveredAt messageHeaderTime `xml:"deliveredat"`
+	ReadBy      string            `xml:"readby"`
+	Parts       int               `xml:"parts"`
+	Username    string            `xml:"username"`
 }
 
 type inboxResponse struct {

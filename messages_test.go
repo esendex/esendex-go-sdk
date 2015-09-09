@@ -260,6 +260,7 @@ func TestMessagesByID(t *testing.T) {
 		direction   = "OUT"
 		parts       = 1
 		username    = "user"
+		readBy      = "john.doe@example.com"
 	)
 
 	var (
@@ -267,6 +268,14 @@ func TestMessagesByID(t *testing.T) {
 		lastStatusAtStr = "2012-01-01T12:00:05.000Z"
 		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
 		submittedAtStr  = "2012-01-01T12:00:02.000Z"
+		receivedAt      = time.Date(2012, 1, 1, 12, 0, 1, 50000000, time.UTC)
+		receivedAtStr   = "2012-01-01T12:00:01.05Z"
+		readAt          = time.Date(2013, 1, 1, 12, 0, 1, 50000000, time.UTC)
+		readAtStr       = "2013-01-01T12:00:01.05Z"
+		sentAt          = time.Date(2013, 2, 1, 12, 0, 1, 50000000, time.UTC)
+		sentAtStr       = "2013-02-01T12:00:01.05Z"
+		deliveredAt     = time.Date(2013, 2, 2, 12, 0, 1, 50000000, time.UTC)
+		deliveredAtStr  = "2013-02-02T12:00:01.05Z"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
@@ -275,6 +284,7 @@ func TestMessagesByID(t *testing.T) {
  <status>`+status+`</status>
  <laststatusat>`+lastStatusAtStr+`</laststatusat>
  <submittedat>`+submittedAtStr+`</submittedat>
+ <receivedat>`+receivedAtStr+`</receivedat>
  <type>`+messageType+`</type>
  <to>
    <phonenumber>`+to+`</phonenumber>
@@ -285,6 +295,10 @@ func TestMessagesByID(t *testing.T) {
  <summary>`+summary+`</summary>
  <body uri="`+bodyURI+`"/>
  <direction>`+direction+`</direction>
+ <readat>`+readAtStr+`</readat>
+ <sentat>`+sentAtStr+`</sentat>
+ <deliveredat>`+deliveredAtStr+`</deliveredat>
+ <readby>`+readBy+`</readby>
  <parts>`+strconv.Itoa(parts)+`</parts>
  <username>`+username+`</username>
 </messageheader>`, 200, map[string]string{})
@@ -309,12 +323,17 @@ func TestMessagesByID(t *testing.T) {
 	assert.Equal(status, result.Status)
 	assert.Equal(lastStatusAt, result.LastStatusAt)
 	assert.Equal(submittedAt, result.SubmittedAt)
+	assert.Equal(receivedAt, result.ReceivedAt)
 	assert.Equal(messageType, result.Type)
 	assert.Equal(to, result.To)
 	assert.Equal(from, result.From)
 	assert.Equal(summary, result.Summary)
 	assert.Equal(bodyURI, result.BodyURI)
 	assert.Equal(direction, result.Direction)
+	assert.Equal(readAt, result.ReadAt)
+	assert.Equal(sentAt, result.SentAt)
+	assert.Equal(deliveredAt, result.DeliveredAt)
+	assert.Equal(readBy, result.ReadBy)
 	assert.Equal(parts, result.Parts)
 	assert.Equal(username, result.Username)
 }
