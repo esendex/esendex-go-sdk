@@ -1,5 +1,5 @@
-// Package xesende is a client for the Esendex REST API.
-package xesende
+// Package esendex is a client for the Esendex REST API.
+package esendex
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 
 const (
 	defaultBaseURL   = "https://api.esendex.com/"
-	defaultUserAgent = "xesende/golang"
+	defaultUserAgent = "esendex/golang"
 )
 
 // Client is the entry point for accessing the Esendex REST API.

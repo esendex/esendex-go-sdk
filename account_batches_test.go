@@ -1,4 +1,4 @@
-package xesende
+package esendex
 
 import (
 	"net/http/httptest"

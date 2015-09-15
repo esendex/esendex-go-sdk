@@ -4,9 +4,9 @@ import (
 	"flag"
 	"log"
 
+	"github.com/esendex/esendex-go-sdk"
 	"github.com/gobs/pretty"
 	"hawx.me/code/hadfield"
-	"hawx.me/code/xesende"
 )
 
 var (
@@ -17,14 +17,14 @@ var (
 
 const pageSize = 20
 
-func pageOpts(page int) xesende.Option {
+func pageOpts(page int) esendex.Option {
 	startIndex := (page - 1) * pageSize
 
-	return xesende.Page(startIndex, pageSize)
+	return esendex.Page(startIndex, pageSize)
 }
 
 var templates = hadfield.Templates{
-	Help: `usage: xesende [command] [arguments]
+	Help: `usage: esendex [command] [arguments]
 
   A command line client for the Esendex REST API.
 
@@ -36,7 +36,7 @@ var templates = hadfield.Templates{
   Commands: {{range .}}
     {{.Name | printf "%-15s"}} # {{.Short}}{{end}}
 `,
-	Command: `usage: xesende {{.Usage}}
+	Command: `usage: esendex {{.Usage}}
 {{.Long}}
 `,
 }
@@ -48,7 +48,7 @@ func main() {
 		log.Fatal("Both --username and --password options are required.")
 	}
 
-	client := xesende.New(*username, *password)
+	client := esendex.New(*username, *password)
 
 	commands := hadfield.Commands{
 		receivedCmd(client),
@@ -60,7 +60,7 @@ func main() {
 	hadfield.Run(commands, templates)
 }
 
-func receivedCmd(client *xesende.Client) *hadfield.Command {
+func receivedCmd(client *esendex.Client) *hadfield.Command {
 	var page int
 
 	cmd := &hadfield.Command{
@@ -86,7 +86,7 @@ func receivedCmd(client *xesende.Client) *hadfield.Command {
 	return cmd
 }
 
-func sentCmd(client *xesende.Client) *hadfield.Command {
+func sentCmd(client *esendex.Client) *hadfield.Command {
 	var page int
 
 	cmd := &hadfield.Command{
@@ -112,7 +112,7 @@ func sentCmd(client *xesende.Client) *hadfield.Command {
 	return cmd
 }
 
-func messageCmd(client *xesende.Client) *hadfield.Command {
+func messageCmd(client *esendex.Client) *hadfield.Command {
 	return &hadfield.Command{
 		Usage: "message MESSAGEID",
 		Short: "displays a message",
@@ -134,7 +134,7 @@ func messageCmd(client *xesende.Client) *hadfield.Command {
 	}
 }
 
-func accountsCmd(client *xesende.Client) *hadfield.Command {
+func accountsCmd(client *esendex.Client) *hadfield.Command {
 	return &hadfield.Command{
 		Usage: "accounts",
 		Short: "list accounts",

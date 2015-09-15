@@ -1,16 +1,16 @@
-package xesende_test
+package esendex_test
 
 import (
 	"log"
 	"time"
 
-	"hawx.me/code/xesende"
+	"github.com/esendex/esendex-go-sdk"
 )
 
-func sendMessage(c *xesende.Client, to, body string) (id string, err error) {
+func sendMessage(c *esendex.Client, to, body string) (id string, err error) {
 	account := c.Account("EX00000")
 
-	messages, err := account.Send([]xesende.Message{
+	messages, err := account.Send([]esendex.Message{
 		{To: "4498499", Body: "Hey"},
 	})
 
@@ -21,7 +21,7 @@ func sendMessage(c *xesende.Client, to, body string) (id string, err error) {
 	return messages.Messages[0].ID, nil
 }
 
-func getStatus(c *xesende.Client, id string) (status string, err error) {
+func getStatus(c *esendex.Client, id string) (status string, err error) {
 	message, err := c.Message(id)
 	if err != nil {
 		return "", err
@@ -31,7 +31,7 @@ func getStatus(c *xesende.Client, id string) (status string, err error) {
 }
 
 func Example() {
-	client := xesende.New("user@example.com", "pass")
+	client := esendex.New("user@example.com", "pass")
 
 	messageID, err := sendMessage(client, "538734", "Hey")
 	if err != nil {
