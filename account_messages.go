@@ -1,7 +1,6 @@
 package esendex
 
 import (
-	"errors"
 	"net/http"
 )
 
@@ -30,13 +29,8 @@ func (c *AccountClient) Received(opts ...Option) (*ReceivedMessagesResponse, err
 	}
 
 	var v inboxResponse
-	resp, err := c.do(req, &v)
-	if err != nil {
+	if _, err = c.do(req, &v); err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("Expected 200")
 	}
 
 	response := &ReceivedMessagesResponse{
