@@ -1,9 +1,4 @@
 language: go
-
-install:
-  - go get -v -t -insecure hawx.me/code/hadfield
-  - go get -v -t github.com/gobs/pretty
-  - go get -v -t github.com/stretchr/testify/assert
   
 notifications:
   email: false
