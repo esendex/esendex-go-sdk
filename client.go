@@ -65,16 +65,16 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 
 func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.client.Do(req)
+	if err != nil {
+		return resp, err
+	}
+
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, ClientError{
 			Method: req.Method,
 			Path:   req.URL.Path,
 			Code:   resp.StatusCode,
 		}
-	}
-
-	if err != nil {
-		return resp, err
 	}
 
 	defer func() {
