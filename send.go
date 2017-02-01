@@ -2,6 +2,7 @@ package esendex
 
 import (
 	"encoding/xml"
+	"regexp"
 	"time"
 )
 
@@ -12,9 +13,14 @@ const (
 	Voice MessageType = "Voice"
 )
 
+var (
+	originatorPattern *regexp.Regexp = regexp.MustCompile(`^[\w*$?!"#%&\-,@'+]{1,11}$`)
+)
+
 // Message is a message to send.
 type Message struct {
 	To           string
+	From         string
 	MessageType  MessageType
 	Lang         string
 	Validity     int
@@ -36,10 +42,34 @@ type SendResponseMessage struct {
 	ID  string
 }
 
+// ValidateOriginator and MustValidateOriginator allow to check an
+// originator validity before it used to override the default one.
+func ValidateOriginator(from string) bool {
+	return originatorPattern.MatchString(from)
+}
+
+func MustValidateOriginator(from string) {
+	ok := ValidateOriginator(from)
+	if !ok {
+		panic("esendex: ValidateOriginator(" + from + ")")
+	}
+}
+
 // Send dispatches a list of messages.
 func (c *AccountClient) Send(messages []Message) (*SendResponse, error) {
 	body := messageDispatchRequest{
 		AccountReference: c.reference,
+		Message:          make([]messageDispatchRequestMessage, len(messages)),
+	}
+
+	return c.doSend(body, messages)
+}
+
+// SendFrom dispatches a list of messages and overrides the default originator.
+func (c *AccountClient) SendFrom(from string, messages []Message) (*SendResponse, error) {
+	body := messageDispatchRequest{
+		AccountReference: c.reference,
+		From:             from,
 		Message:          make([]messageDispatchRequestMessage, len(messages)),
 	}
 
@@ -61,6 +91,7 @@ func (c *AccountClient) doSend(body messageDispatchRequest, messages []Message) 
 	for i, message := range messages {
 		body.Message[i] = messageDispatchRequestMessage{
 			To:           message.To,
+			From:         message.From,
 			MessageType:  string(message.MessageType),
 			Lang:         message.Lang,
 			Validity:     message.Validity,
@@ -99,11 +130,13 @@ type messageDispatchRequest struct {
 	XMLName          xml.Name                        `xml:"messages"`
 	AccountReference string                          `xml:"accountreference"`
 	SendAt           *time.Time                      `xml:"sendat"`
+	From             string                          `xml:"from,omitempty"`
 	Message          []messageDispatchRequestMessage `xml:"message"`
 }
 
 type messageDispatchRequestMessage struct {
 	To           string `xml:"to"`
+	From         string `xml:"from,omitempty"`
 	MessageType  string `xml:"type,omitempty"`
 	Lang         string `xml:"lang,omitempty"`
 	Validity     int    `xml:"validity,omitempty"`

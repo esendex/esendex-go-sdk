@@ -229,3 +229,47 @@ func TestSendAtSingleMessage(t *testing.T) {
 	assert.Equal(messageID, result.Messages[0].ID)
 	assert.Equal(messageURI, result.Messages[0].URI)
 }
+
+func TestOriginatorValidation(t *testing.T) {
+	assert := assert.New(t)
+
+	// Test invalid lengths
+	assert.False(ValidateOriginator(""))
+	assert.False(ValidateOriginator("aaaaaaaaaaaa"))
+
+	// Test valid lengths
+	assert.True(ValidateOriginator("a"))
+	assert.True(ValidateOriginator("aa"))
+	assert.True(ValidateOriginator("aaa"))
+	assert.True(ValidateOriginator("aaaa"))
+	assert.True(ValidateOriginator("aaaaa"))
+	assert.True(ValidateOriginator("aaaaaa"))
+	assert.True(ValidateOriginator("aaaaaaa"))
+	assert.True(ValidateOriginator("aaaaaaaa"))
+	assert.True(ValidateOriginator("aaaaaaaaa"))
+	assert.True(ValidateOriginator("aaaaaaaaaa"))
+	assert.True(ValidateOriginator("aaaaaaaaaaa"))
+
+	// Test valid characters
+	assert.True(ValidateOriginator("ABCDEFGHIKL"))
+	assert.True(ValidateOriginator("MNOPQRSTUVW"))
+	assert.True(ValidateOriginator("XYZabcdefgh"))
+	assert.True(ValidateOriginator("ijklmnopqrs"))
+	assert.True(ValidateOriginator("tuvwxyz0123"))
+	assert.True(ValidateOriginator("456789_*$?!"))
+	assert.True(ValidateOriginator("\"#%&-,@'+"))
+
+	// Test invalid characters
+	assert.False(ValidateOriginator("€"))
+	assert.False(ValidateOriginator("£"))
+	assert.False(ValidateOriginator("é"))
+	assert.False(ValidateOriginator("ç"))
+
+	// Test panics
+	assert.Panics(func() {
+		MustValidateOriginator("")
+	})
+	assert.NotPanics(func() {
+		MustValidateOriginator("esendex")
+	})
+}
