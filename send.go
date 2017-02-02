@@ -2,7 +2,6 @@ package esendex
 
 import (
 	"encoding/xml"
-	"regexp"
 	"time"
 )
 
@@ -11,10 +10,6 @@ type MessageType string
 const (
 	SMS   MessageType = "SMS"
 	Voice MessageType = "Voice"
-)
-
-var (
-	originatorPattern *regexp.Regexp = regexp.MustCompile(`^[\w*$?!"#%&\-,@'+]{1,11}$`)
 )
 
 // Message is a message to send.
