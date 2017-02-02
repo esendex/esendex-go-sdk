@@ -42,19 +42,6 @@ type SendResponseMessage struct {
 	ID  string
 }
 
-// ValidateOriginator and MustValidateOriginator allow to check an
-// originator validity before it used to override the default one.
-func ValidateOriginator(from string) bool {
-	return originatorPattern.MatchString(from)
-}
-
-func MustValidateOriginator(from string) {
-	ok := ValidateOriginator(from)
-	if !ok {
-		panic("esendex: ValidateOriginator(" + from + ")")
-	}
-}
-
 // Send dispatches a list of messages.
 func (c *AccountClient) Send(messages []Message) (*SendResponse, error) {
 	body := messageDispatchRequest{
