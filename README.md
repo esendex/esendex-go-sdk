@@ -1,5 +1,7 @@
 # esendex
 
+[![Build Status](https://travis-ci.org/esendex/esendex-go-sdk.svg)](https://travis-ci.org/esendex/esendex-go-sdk)
+
 A client for the [Esendex REST API][esendex].
 
 ``` bash
