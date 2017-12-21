@@ -8,6 +8,4 @@ A client for the [Esendex REST API][esendex].
 $ go get github.com/esendex/esendex-go-sdk
 ```
 
-See the [documentation][docs].
-
 [esendex]: http://developers.esendex.com/APIs/REST-API
