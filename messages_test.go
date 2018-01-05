@@ -83,6 +83,7 @@ func TestMessagesSent(t *testing.T) {
 		lastStatusAtStr = "2012-01-01T12:00:05.000"
 		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
 		submittedAtStr  = "2012-01-01T12:00:02.000"
+		batchID         = "9e2123b5-5f6a-47dd-866a-1f026d6f1e26"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
@@ -104,7 +105,8 @@ func TestMessagesSent(t *testing.T) {
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <username>`+username+`</username>
-  <failurereason>
+  <batch id="`+batchID+`" link="`+uri+`/api/v1.0/messagebatches/`+batchID+`" />
+ <failurereason>
     <code>`+strconv.Itoa(failureCode)+`</code>
     <description>`+failureDesc+`</description>
     <permanentfailure>`+strconv.FormatBool(failurePerm)+`</permanentfailure>
@@ -152,6 +154,7 @@ func TestMessagesSent(t *testing.T) {
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
+		assert.Equal(batchID, message.BatchID)
 		assert.Equal(failureCode, message.FailureReason.Code)
 		assert.Equal(failureDesc, message.FailureReason.Description)
 		assert.Equal(failurePerm, message.FailureReason.Permanent)
@@ -202,6 +205,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
 		lastStatusAtStr = "2012-01-01T12:00:05.000"
 		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
 		submittedAtStr  = "2012-01-01T12:00:02.000"
+		batchId         = "9e2123b5-5f6a-47dd-866a-1f026d6f1e26"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
@@ -223,6 +227,7 @@ func TestMessagesSentWithPaging(t *testing.T) {
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <username>`+username+`</username>
+  <batch id="`+batchId+`" link="`+uri+`/api/v1.0/messagebatches/`+batchId+`" />
  </messageheader>
 </messageheaders>`, 200, map[string]string{})
 	s := httptest.NewServer(h)
@@ -270,10 +275,11 @@ func TestMessagesSentWithPaging(t *testing.T) {
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
+		assert.Equal(batchId, message.BatchID)
 	}
 }
 
-func TestMessagesByID(t *testing.T) {
+func TestMessagesByIDOutbound(t *testing.T) {
 	const (
 		id          = "messageheaderid"
 		uri         = "http://somemessageheader"
@@ -285,6 +291,113 @@ func TestMessagesByID(t *testing.T) {
 		summary     = "SUM"
 		bodyURI     = "http://rrehekr"
 		direction   = "OUT"
+		parts       = 1
+		username    = "user"
+		readBy      = "john.doe@example.com"
+		failureCode = 111
+		failureDesc = "Temporary issues with some of the things"
+		failurePerm = false
+	)
+
+	var (
+		lastStatusAt    = time.Date(2012, 1, 1, 12, 0, 5, 0, time.UTC)
+		lastStatusAtStr = "2012-01-01T12:00:05.000Z"
+		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
+		submittedAtStr  = "2012-01-01T12:00:02.000Z"
+		receivedAt      = time.Date(2012, 1, 1, 12, 0, 1, 50000000, time.UTC)
+		receivedAtStr   = "2012-01-01T12:00:01.05Z"
+		readAt          = time.Date(2013, 1, 1, 12, 0, 1, 50000000, time.UTC)
+		readAtStr       = "2013-01-01T12:00:01.05Z"
+		sentAt          = time.Date(2013, 2, 1, 12, 0, 1, 50000000, time.UTC)
+		sentAtStr       = "2013-02-01T12:00:01.05Z"
+		deliveredAt     = time.Date(2013, 2, 2, 12, 0, 1, 50000000, time.UTC)
+		deliveredAtStr  = "2013-02-02T12:00:01.05Z"
+		batchID         = "9e2123b5-5f6a-47dd-866a-1f026d6f1e26"
+	)
+
+	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
+<messageheader id="`+id+`" uri="`+uri+`" xmlns="http://api.esendex.com/ns/">
+ <reference>`+reference+`</reference>
+ <status>`+status+`</status>
+ <laststatusat>`+lastStatusAtStr+`</laststatusat>
+ <submittedat>`+submittedAtStr+`</submittedat>
+ <receivedat>`+receivedAtStr+`</receivedat>
+ <type>`+string(messageType)+`</type>
+ <to>
+   <phonenumber>`+to+`</phonenumber>
+ </to>
+ <from>
+  <phonenumber>`+from+`</phonenumber>
+ </from>
+ <summary>`+summary+`</summary>
+ <body uri="`+bodyURI+`"/>
+ <direction>`+direction+`</direction>
+ <readat>`+readAtStr+`</readat>
+ <sentat>`+sentAtStr+`</sentat>
+ <deliveredat>`+deliveredAtStr+`</deliveredat>
+ <readby>`+readBy+`</readby>
+ <parts>`+strconv.Itoa(parts)+`</parts>
+ <username>`+username+`</username>
+ <batch id="`+batchID+`" link="`+uri+`/api/v1.0/messagebatches/`+batchID+`" />
+ <failurereason>
+  <code>`+strconv.Itoa(failureCode)+`</code>
+  <description>`+failureDesc+`</description>
+  <permanentfailure>`+strconv.FormatBool(failurePerm)+`</permanentfailure>
+ </failurereason>
+</messageheader>`, 200, map[string]string{})
+	s := httptest.NewServer(h)
+	defer s.Close()
+
+	client := New("user", "pass")
+	client.BaseURL, _ = url.Parse(s.URL)
+
+	result, err := client.Message(id)
+
+	assert := assert.New(t)
+
+	assert.Nil(err)
+
+	assert.Equal("GET", h.Request.Method)
+	assert.Equal("/v1.0/messageheaders/"+id, h.Request.URL.String())
+
+	assert.Equal(id, result.ID)
+	assert.Equal(uri, result.URI)
+	assert.Equal(reference, result.Reference)
+	assert.Equal(status, result.Status)
+	assert.Equal(lastStatusAt, result.LastStatusAt)
+	assert.Equal(submittedAt, result.SubmittedAt)
+	assert.Equal(receivedAt, result.ReceivedAt)
+	assert.Equal(messageType, result.Type)
+	assert.Equal(to, result.To)
+	assert.Equal(from, result.From)
+	assert.Equal(summary, result.Summary)
+	assert.Equal(bodyURI, result.bodyURI)
+	assert.Equal(direction, result.Direction)
+	assert.Equal(readAt, result.ReadAt)
+	assert.Equal(sentAt, result.SentAt)
+	assert.Equal(deliveredAt, result.DeliveredAt)
+	assert.Equal(readBy, result.ReadBy)
+	assert.Equal(parts, result.Parts)
+	assert.Equal(username, result.Username)
+	assert.Equal(failureCode, result.FailureReason.Code)
+	assert.Equal(failureDesc, result.FailureReason.Description)
+	assert.Equal(failurePerm, result.FailureReason.Permanent)
+	assert.Equal(batchID, *result.BatchID)
+}
+
+// The key difference to outbound messages is that inbound messages do not have a batch ID
+func TestMessagesByIDInbound(t *testing.T) {
+	const (
+		id          = "messageheaderid"
+		uri         = "http://somemessageheader"
+		reference   = "EXETRTRE"
+		status      = "STATUS"
+		messageType = Voice
+		to          = "4538224364236"
+		from        = "428377843"
+		summary     = "SUM"
+		bodyURI     = "http://rrehekr"
+		direction   = "Inbound"
 		parts       = 1
 		username    = "user"
 		readBy      = "john.doe@example.com"
@@ -374,6 +487,7 @@ func TestMessagesByID(t *testing.T) {
 	assert.Equal(failureCode, result.FailureReason.Code)
 	assert.Equal(failureDesc, result.FailureReason.Description)
 	assert.Equal(failurePerm, result.FailureReason.Permanent)
+	assert.Equal((*string)(nil), result.BatchID)
 }
 
 func TestMessagesReceived(t *testing.T) {
