@@ -34,6 +34,7 @@ func TestAccountMessagesSent(t *testing.T) {
 		lastStatusAtStr = "2012-01-01T12:00:05.000"
 		submittedAt     = time.Date(2012, 1, 1, 12, 0, 2, 0, time.UTC)
 		submittedAtStr  = "2012-01-01T12:00:02.000"
+		batchID         = "9e2123b5-5f6a-47dd-866a-1f026d6f1e26"
 	)
 
 	h := newRecordingHandler(`<?xml version="1.0" encoding="utf-8"?>
@@ -55,7 +56,8 @@ func TestAccountMessagesSent(t *testing.T) {
   <direction>`+direction+`</direction>
   <parts>`+strconv.Itoa(parts)+`</parts>
   <username>`+username+`</username>
- </messageheader>
+  <batch id="`+batchID+`" link="`+uri+`/api/v1.0/messagebatches/`+batchID+`" />
+  </messageheader>
 </messageheaders>`, 200, map[string]string{})
 	s := httptest.NewServer(h)
 	defer s.Close()
@@ -103,6 +105,7 @@ func TestAccountMessagesSent(t *testing.T) {
 		assert.Equal(direction, message.Direction)
 		assert.Equal(parts, message.Parts)
 		assert.Equal(username, message.Username)
+		assert.Equal(batchID, message.BatchID)
 	}
 }
 

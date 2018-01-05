@@ -47,6 +47,7 @@ type SentMessageResponse struct {
 	Parts         int
 	Username      string
 	FailureReason *FailureReason
+	BatchID       string
 
 	bodyURI string
 }
@@ -54,26 +55,29 @@ type SentMessageResponse struct {
 func (r SentMessageResponse) getBodyURI() string { return r.bodyURI }
 
 // MessageResponse is a single message. It implements messageWithBody.
+//
+// BatchID might be nil, as inbound messages do not have a batch ID.
 type MessageResponse struct {
-	ID           string
-	URI          string
-	Reference    string
-	Status       string
-	LastStatusAt time.Time
-	SubmittedAt  time.Time
-	ReceivedAt   time.Time
-	Type         MessageType
-	To           string
-	From         string
-	Summary      string
-	Direction    string
-	ReadAt       time.Time
-	SentAt       time.Time
-	DeliveredAt  time.Time
-	ReadBy       string
-	Parts        int
-	Username     string
+	ID            string
+	URI           string
+	Reference     string
+	Status        string
+	LastStatusAt  time.Time
+	SubmittedAt   time.Time
+	ReceivedAt    time.Time
+	Type          MessageType
+	To            string
+	From          string
+	Summary       string
+	Direction     string
+	ReadAt        time.Time
+	SentAt        time.Time
+	DeliveredAt   time.Time
+	ReadBy        string
+	Parts         int
+	Username      string
 	FailureReason *FailureReason
+	BatchID       *string
 
 	bodyURI string
 }
@@ -156,6 +160,7 @@ func (c *Client) Sent(opts ...Option) (*SentMessagesResponse, error) {
 			Direction:    message.Direction,
 			Parts:        message.Parts,
 			Username:     message.Username,
+			BatchID:      message.Batch.ID,
 		}
 
 		if message.FailureReason != nil {
@@ -249,6 +254,11 @@ func (c *Client) Message(id string) (*MessageResponse, error) {
 		ReadBy:       v.ReadBy,
 		Parts:        v.Parts,
 		Username:     v.Username,
+		BatchID:      nil,
+	}
+
+	if v.Batch != nil {
+		response.BatchID = &v.Batch.ID
 	}
 
 	if v.FailureReason != nil {
@@ -328,6 +338,12 @@ type messageHeadersResponseMessageHeader struct {
 	Parts         int                   `xml:"parts"`
 	Username      string                `xml:"username"`
 	FailureReason *messageFailureReason `xml:"failurereason"`
+	Batch         *resourceLink         `xml:"batch"`
+}
+
+type resourceLink struct {
+	ID   string `xml:"id,attr"`
+	Link string `xml:"link,attr"`
 }
 
 type inboxResponse struct {
